@@ -46,18 +46,6 @@ def process_image(img_file):
 def index():
     return render_template('dashboard.html')
 
-@app.route('/records', methods=['GET'])
-def records():
-    return render_template('records.html')
-
-@app.route('/analytics', methods=['GET'])
-def analytics():
-    return render_template('analytics.html')
-
-@app.route('/settings', methods=['GET'])
-def settings():
-    return render_template('settings.html')
-
 @app.route('/predict', methods=['POST'])
 def predict():
     if model is None:
