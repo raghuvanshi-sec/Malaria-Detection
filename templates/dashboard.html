@@ -1,138 +1,242 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - AI Malaria Detection System{% endblock %}
-
+{% block title %}Dashboard - Clinical Overview{% endblock %}
 {% block nav_dashboard %}active{% endblock %}
-{% block nav_upload %}{% endblock %}
 
 {% block content %}
-<h4 class="mb-4 text-dark fw-bold">Diagnostic Dashboard</h4>
-
-<!-- Stats Row -->
-<div class="row mb-4">
-    <div class="col-md-3 mb-3 mb-md-0">
-        <div class="custom-card stat-card">
-            <div class="stat-icon"><i class="fa-solid fa-bullseye"></i></div>
-            <div class="stat-details">
-                <h3>95%+</h3>
-                <p>Model Accuracy</p>
-            </div>
+<!-- CASE INFORMATION STRIP -->
+<div class="case-strip mb-4 rounded-3 shadow-sm">
+    <div class="case-item">
+        <span class="case-label">Case ID</span>
+        <span class="case-value"><i class="fa-solid fa-hashtag text-primary me-2"></i> MLR-2026-0042</span>
+    </div>
+    <div class="case-item">
+        <span class="case-label">Slide ID</span>
+        <span class="case-value">SLD-990-2A</span>
+    </div>
+    <div class="case-item">
+        <span class="case-label">Patient ID</span>
+        <div class="case-value">
+            <input type="text" class="case-input" placeholder="Enter Patient ID...">
         </div>
     </div>
-    <div class="col-md-3 mb-3 mb-md-0">
-        <div class="custom-card stat-card">
-            <div class="stat-icon"><i class="fa-solid fa-images"></i></div>
-            <div class="stat-details">
-                <h3>27.5k</h3>
-                <p>Total Dataset Images</p>
-            </div>
-        </div>
+    <div class="case-item">
+        <span class="case-label">Technician</span>
+        <span class="case-value">T. Barnes (ID: 442)</span>
     </div>
-    <div class="col-md-3 mb-3 mb-md-0">
-        <div class="custom-card stat-card">
-            <div class="stat-icon"><i class="fa-solid fa-network-wired"></i></div>
-            <div class="stat-details">
-                <h3 style="font-size: 1.2rem; line-height: 1.5rem;">MobileNetV2</h3>
-                <p>CNN Architecture</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3 mb-md-0">
-        <div class="custom-card stat-card">
-            <div class="stat-icon"><i class="fa-solid fa-expand"></i></div>
-            <div class="stat-details">
-                <h3>128x128</h3>
-                <p>Input Resolution</p>
-            </div>
-        </div>
+    <div class="case-item ms-auto">
+        <span class="case-label">Date & Time</span>
+        <span class="case-value" id="uploadTimeStrap">Waiting for upload...</span>
     </div>
 </div>
 
-<div class="row">
-    <!-- Upload Section -->
-    <div class="col-md-6 mb-4">
+<div class="row g-4">
+    <!-- LEFT PANEL: SLIDE ANALYSIS VIEWER -->
+    <div class="col-xl-7 col-lg-6">
         <div class="custom-card">
-            <div class="card-header-custom">
-                <i class="fa-solid fa-file-medical"></i> New Analysis
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <div><i class="fa-solid fa-microscope"></i> Slide Analysis Viewer</div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" id="zoomOutBtn"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary" id="zoomInBtn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                </div>
             </div>
             <div class="card-body p-4">
+                
                 <form id="uploadForm">
                     <div class="upload-area" id="dropZone">
-                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
-                        <h5 class="text-dark fw-bold" id="uploadText">Select Blood Smear Image</h5>
-                        <p class="text-muted small" id="uploadSubtext">Drag and drop here, or click to browse</p>
-                        <input type="file" id="fileInput" name="file" accept="image/jpeg, image/png, image/jpg">
+                        <i class="fa-solid fa-photo-film upload-icon"></i>
+                        <h5 class="fw-bold mb-1">Upload Blood Smear Slide</h5>
+                        <p class="text-muted small mb-0">Drag and drop slide image here, or click to browse (128x128px upscaled automatically)</p>
+                        <input type="file" id="fileInput" name="file" class="d-none" accept="image/jpeg, image/png, image/jpg">
+                    </div>
+                </form>
+
+                <div class="viewer-container d-none fade-in" id="previewContainer">
+                    <div class="viewer-top-stats" id="processTimeBanner">
+                        <i class="fa-solid fa-stopwatch me-1"></i> Processing...
                     </div>
                     
-                    <div class="image-preview-container" id="previewContainer">
-                        <img id="imagePreview" src="" alt="Image Preview">
-                        <p class="text-muted small mt-2 mb-0" id="fileName"></p>
+                    <img id="imagePreview" src="" alt="Slide Preview">
+                    
+                    <div class="viewer-controls">
+                        <button class="btn-view-toggle active" id="viewOriginal">Original</button>
+                        <button class="btn-view-toggle" id="viewHeatmap">AI Heatmap</button>
+                        <button class="btn-view-toggle" id="viewOverlay">Overlay</button>
                     </div>
+                </div>
 
-                    <button type="submit" class="btn-medical" id="predictBtn">
-                        <i class="fa-solid fa-microscope"></i> Run Prediction
+                <div class="mt-4 text-center">
+                    <button type="button" class="btn-medical w-100 py-3 fs-6 d-none fade-in" id="predictBtn">
+                        <i class="fa-solid fa-microchip"></i> Run Deep Learning Analysis
                     </button>
-                </form>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <!-- Result Section -->
-    <div class="col-md-6 mb-4">
+    <!-- RIGHT PANEL: DIAGNOSIS SUMMARY CARD -->
+    <div class="col-xl-5 col-lg-6">
         <div class="custom-card">
             <div class="card-header-custom">
-                <i class="fa-solid fa-clipboard-check"></i> Analysis Results
+                <i class="fa-solid fa-clipboard-check"></i> Diagnosis Summary
             </div>
-            <div class="card-body p-4 text-center">
+            <div class="card-body p-4">
                 
-                <!-- Placeholder before prediction -->
-                <div id="resultPlaceholder" style="padding: 40px 0; color: #94a3b8;">
-                    <i class="fa-solid fa-vial-circle-check" style="font-size: 4rem; opacity: 0.2; margin-bottom: 16px;"></i>
-                    <p>Upload an image and run prediction to view results.</p>
+                <!-- Waiting State -->
+                <div id="resultPlaceholder" class="text-center py-5">
+                    <i class="fa-solid fa-vial-circle-check text-muted" style="font-size: 4rem; opacity: 0.2;"></i>
+                    <p class="text-muted mt-3 mb-0 fw-medium">Upload a slide and run analysis to view AI diagnostic results.</p>
                 </div>
 
-                <!-- Loader -->
-                <div class="loader-container" id="loader">
-                    <div class="spinner-border spinner-custom mb-3" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <h5 class="text-dark">Analyzing slide...</h5>
-                    <p class="text-muted small">Applying Deep Learning model</p>
+                <!-- Loading State -->
+                <div class="loader-container text-center py-5" id="loader">
+                    <i class="fa-solid fa-spinner spin-anim text-primary" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <h5 class="fw-bold">Analyzing Cell Structures...</h5>
+                    <p class="text-muted small">Applying MobileNetV2 architecture layers.</p>
                 </div>
 
-                <!-- Actual Results -->
-                <div id="resultArea">
-                    <h6 class="text-muted text-uppercase fw-bold mb-2">Diagnosis</h6>
-                    
-                    <div id="resultBadge" class="result-badge"></div>
-                    
-                    <div class="text-start mt-4">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span class="fw-bold text-dark small">AI Confidence Score</span>
-                            <span class="fw-bold text-dark small" id="confidenceText">0%</span>
+                <!-- Result Layout -->
+                <div id="resultArea" class="d-none fade-in">
+                    <div class="diagnosis-container">
+                        
+                        <!-- Main Badge -->
+                        <div id="resultBadge" class="status-badge-large">
+                            <!-- Injected dynamically -->
                         </div>
-                        <div class="confidence-meter">
-                            <div id="confidenceBar" class="confidence-fill"></div>
+                        
+                        <!-- Probability Breakdown -->
+                        <div class="prob-breakdown">
+                            <div class="prob-row">
+                                <span>Infected Probability</span>
+                                <span id="probInfectedVal">0%</span>
+                            </div>
+                            <div class="prob-bar-bg">
+                                <div class="prob-bar-fill fill-danger" id="probInfectedBar"></div>
+                            </div>
+
+                            <div class="prob-row mt-3">
+                                <span>Uninfected Probability</span>
+                                <span id="probUninfectedVal">0%</span>
+                            </div>
+                            <div class="prob-bar-bg">
+                                <div class="prob-bar-fill fill-success" id="probUninfectedBar"></div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="recommendation-box text-start">
-                        <h6 class="fw-bold text-dark"><i class="fa-solid fa-user-doctor text-primary me-2"></i>Recommendation</h6>
-                        <p id="recommendationText" class="mb-0 small text-muted"></p>
+                        <!-- Severity Index -->
+                        <div class="mt-4 text-start">
+                            <span class="fs-6 fw-bold">Severity Index</span>
+                            <span class="float-end fw-bold" id="severityValue">1 / 10</span>
+                            <div class="severity-meter" id="severityMeter">
+                                <!-- 10 ticks generated via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Recommendation Section -->
+                        <div class="clincal-recommendation" id="recommendationText">
+                            <!-- Injected dynamically -->
+                        </div>
+
                     </div>
-                    
-                    <button type="button" class="btn btn-outline-secondary btn-sm mt-4 w-100 py-2 fw-bold" id="resetBtn">
-                        <i class="fa-solid fa-rotate-right"></i> Analyze Another Slide
-                    </button>
                 </div>
-
-                <!-- Error Alert -->
-                <div class="alert alert-danger mt-3 d-none text-start" id="errorAlert"></div>
 
             </div>
         </div>
     </div>
 </div>
+
+<div class="row g-4 mt-1">
+    
+    <!-- ACTION PANEL -->
+    <div class="col-lg-4">
+        <div class="custom-card">
+            <div class="card-header-custom">
+                <i class="fa-solid fa-bolt"></i> Action Panel
+            </div>
+            <div class="card-body">
+                <button class="btn-medical w-100 mb-3" id="resetBtn">
+                    <i class="fa-solid fa-rotate-right"></i> Analyze Another Slide
+                </button>
+                <div class="d-flex flex-column gap-2">
+                    <button class="btn-action"><i class="fa-solid fa-file-pdf text-danger"></i> Generate PDF Report</button>
+                    <button class="btn-action"><i class="fa-solid fa-download text-primary"></i> Export Case Data (CSV)</button>
+                    <button class="btn-action"><i class="fa-solid fa-code-compare text-success"></i> Compare with Previous</button>
+                </div>
+                
+                <h6 class="fw-bold mt-4 mb-2 fs-6">Doctor's Notes</h6>
+                <textarea class="medical-notes" placeholder="Add clinical observations here..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- PERFORMANCE METRICS & SYSTEM HEALTH -->
+    <div class="col-lg-8">
+        
+        <div class="custom-card mb-4" style="height: auto;">
+            <div class="card-header-custom cursor-pointer" id="metricsToggle" data-bs-toggle="collapse" data-bs-target="#metricsCollapse" aria-expanded="false">
+                <span><i class="fa-solid fa-chart-line"></i> Model Performance Metrics</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            
+            <div class="collapse" id="metricsCollapse">
+                <div class="card-body bg-light border-bottom p-4">
+                    <div class="row g-3 text-center">
+                        <div class="col-4 col-md-2">
+                            <div class="fw-bold fs-5 text-dark">89.0%</div>
+                            <div class="text-muted small">Accuracy</div>
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <div class="fw-bold fs-5 text-dark">95.0%</div>
+                            <div class="text-muted small">Precision</div>
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <div class="fw-bold fs-5 text-dark">82.0%</div>
+                            <div class="text-muted small">Recall</div>
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <div class="fw-bold fs-5 text-dark">89.0%</div>
+                            <div class="text-muted small">F1 Score</div>
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <div class="fw-bold fs-5 text-dark">27.5k</div>
+                            <div class="text-muted small">Train Data</div>
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <div class="fw-bold fs-5 text-dark">128px</div>
+                            <div class="text-muted small">Resolution</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Health Widgets -->
+        <div class="row g-3">
+            <div class="col-sm-6">
+                <div class="system-widget">
+                    <div>
+                        <div class="widget-title">Model Status</div>
+                        <div class="widget-value text-success"><i class="fa-solid fa-circle-check me-2"></i>Active</div>
+                    </div>
+                    <i class="fa-solid fa-server fa-2x text-muted opacity-25"></i>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="system-widget">
+                    <div>
+                        <div class="widget-title">System Uptime</div>
+                        <div class="widget-value text-primary">99.9%</div>
+                    </div>
+                    <i class="fa-solid fa-clock-rotate-left fa-2x text-muted opacity-25"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -142,32 +246,43 @@
         const fileInput = document.getElementById("fileInput");
         const previewContainer = document.getElementById("previewContainer");
         const imagePreview = document.getElementById("imagePreview");
-        const fileNameDisplay = document.getElementById("fileName");
         const predictBtn = document.getElementById("predictBtn");
-        const uploadForm = document.getElementById("uploadForm");
         
         const resultPlaceholder = document.getElementById("resultPlaceholder");
         const loader = document.getElementById("loader");
         const resultArea = document.getElementById("resultArea");
+        
         const resultBadge = document.getElementById("resultBadge");
-        const confidenceText = document.getElementById("confidenceText");
-        const confidenceBar = document.getElementById("confidenceBar");
+        const probInfectedVal = document.getElementById("probInfectedVal");
+        const probInfectedBar = document.getElementById("probInfectedBar");
+        const probUninfectedVal = document.getElementById("probUninfectedVal");
+        const probUninfectedBar = document.getElementById("probUninfectedBar");
+        
+        const severityMeter = document.getElementById("severityMeter");
+        const severityValue = document.getElementById("severityValue");
+        
         const recommendationText = document.getElementById("recommendationText");
-        const errorAlert = document.getElementById("errorAlert");
         const resetBtn = document.getElementById("resetBtn");
+        const processTimeBanner = document.getElementById("processTimeBanner");
+        
+        let currentZoom = 1;
+        
+        // Severity Ticks init
+        for(let i=1; i<=10; i++){
+            const tick = document.createElement("div");
+            tick.className = "severity-tick";
+            severityMeter.appendChild(tick);
+        }
 
         // Handle Drag and Drop
         dropZone.addEventListener("click", () => fileInput.click());
-        
         dropZone.addEventListener("dragover", (e) => {
             e.preventDefault();
             dropZone.classList.add("dragover");
         });
-        
         dropZone.addEventListener("dragleave", () => {
             dropZone.classList.remove("dragover");
         });
-        
         dropZone.addEventListener("drop", (e) => {
             e.preventDefault();
             dropZone.classList.remove("dragover");
@@ -176,116 +291,169 @@
                 handleFileSelection();
             }
         });
-
         fileInput.addEventListener("change", handleFileSelection);
 
         function handleFileSelection() {
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                
-                // Display preview
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imagePreview.src = e.target.result;
-                    previewContainer.style.display = "block";
-                    dropZone.style.display = "none";
+                    previewContainer.classList.remove("d-none");
+                    dropZone.classList.add("d-none");
+                    predictBtn.classList.remove("d-none");
+                    
+                    // Set current upload time
+                    const now = new Date();
+                    document.getElementById("uploadTimeStrap").innerText = now.toLocaleString();
                 }
                 reader.readAsDataURL(file);
-                
-                fileNameDisplay.textContent = file.name;
+                currentZoom = 1;
+                imagePreview.style.transform = `scale(${currentZoom})`;
                 predictBtn.disabled = false;
-                
-                // Reset errors if any
-                errorAlert.classList.add("d-none");
             }
         }
 
-        // Handle Form Submit
-        uploadForm.addEventListener("submit", function(e) {
+        // View Toggles
+        const btnsToggle = document.querySelectorAll('.btn-view-toggle');
+        btnsToggle.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                btnsToggle.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                // Mock behavior
+                if(btn.id === 'viewHeatmap') {
+                    imagePreview.style.filter = "contrast(150%) hue-rotate(90deg) opacity(80%)";
+                } else if(btn.id === 'viewOverlay') {
+                    imagePreview.style.filter = "sepia(50%) brightness(120%)";
+                } else {
+                    imagePreview.style.filter = "none";
+                }
+            });
+        });
+
+        // Zoom Controls
+        document.getElementById('zoomInBtn').addEventListener('click', () => {
+            if(currentZoom < 3) { currentZoom += 0.2; imagePreview.style.transform = `scale(${currentZoom})`; }
+        });
+        document.getElementById('zoomOutBtn').addEventListener('click', () => {
+            if(currentZoom > 0.5) { currentZoom -= 0.2; imagePreview.style.transform = `scale(${currentZoom})`; }
+        });
+
+        // Handle Prediction
+        predictBtn.addEventListener("click", function(e) {
             e.preventDefault();
-            
             if (!fileInput.files.length) return;
 
             const formData = new FormData();
             formData.append("file", fileInput.files[0]);
 
-            // UI Transitions
-            resultPlaceholder.style.display = "none";
-            resultArea.style.display = "none";
-            errorAlert.classList.add("d-none");
+            resultPlaceholder.classList.add("d-none");
+            resultArea.classList.add("d-none");
             loader.style.display = "block";
             predictBtn.disabled = true;
+            processTimeBanner.innerHTML = `<i class="fa-solid fa-spinner spin-anim me-1"></i> Processing...`;
+
+            const startTime = performance.now();
 
             fetch("/predict", {
                 method: "POST",
                 body: formData
             })
-            .then(response => response.json().then(data => ({status: response.status, body: data})))
-            .then(res => {
+            .then(res => res.json())
+            .then(data => {
                 loader.style.display = "none";
+                if(data.error) throw new Error(data.error);
                 
-                if (res.status !== 200 || res.body.error) {
-                    throw new Error(res.body.error || "Failed to process image.");
-                }
+                const endTime = performance.now();
+                const processSecs = ((endTime - startTime) / 1000).toFixed(2);
+                processTimeBanner.innerHTML = `<i class="fa-solid fa-check me-1"></i> Processed in ${processSecs}s`;
                 
-                displayResults(res.body);
+                displayResults(data);
             })
             .catch(error => {
                 loader.style.display = "none";
-                resultPlaceholder.style.display = "block";
+                resultPlaceholder.classList.remove("d-none");
                 predictBtn.disabled = false;
-                
-                errorAlert.textContent = error.message;
-                errorAlert.classList.remove("d-none");
+                alert("Analysis Failed: " + error.message);
+                processTimeBanner.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-warning me-1"></i> Failed`;
             });
         });
 
         function displayResults(data) {
-            resultArea.style.display = "block";
+            resultArea.classList.remove("d-none");
             
-            // Reset bar properties
-            confidenceBar.style.width = "0%";
-            confidenceBar.className = "confidence-fill";
-            resultBadge.className = "result-badge";
-
-            // Format Confidence
-            const confValue = parseFloat(data.confidence);
-            confidenceText.textContent = confValue.toFixed(2) + "%";
+            // Format Confidence Data
+            const confUninfected = data.class === "Uninfected" ? data.confidence : 100 - data.confidence;
+            const confInfected = data.class === "Parasitized" ? data.confidence : 100 - data.confidence;
             
-            // Animate progress bar slightly delayed to ensure transition triggers
+            probInfectedVal.textContent = confInfected.toFixed(1) + "%";
+            probUninfectedVal.textContent = confUninfected.toFixed(1) + "%";
+            
+            // Animation for bars
+            probInfectedBar.style.width = "0%";
+            probUninfectedBar.style.width = "0%";
             setTimeout(() => {
-                confidenceBar.style.width = confValue + "%";
-            }, 50);
+                probInfectedBar.style.width = confInfected + "%";
+                probUninfectedBar.style.width = confUninfected + "%";
+            }, 100);
+
+            // Ticks update
+            const ticks = severityMeter.children;
+            for(let i=0; i<ticks.length; i++){ ticks[i].className = "severity-tick"; }
 
             if (data.class === "Parasitized") {
-                resultBadge.innerHTML = `<i class="fa-solid fa-virus me-2"></i>Parasitized`;
-                resultBadge.classList.add("result-parasitized");
-                confidenceBar.classList.add("fill-danger");
+                resultBadge.innerHTML = `<i class="fa-solid fa-virus me-3"></i>HIGH RISK - PARASITIZED`;
+                resultBadge.className = "status-badge-large status-high-risk";
                 
-                recommendationText.innerHTML = `Plasmodium parasites detected. <strong>Immediate medical review required.</strong> Recommend confirmatory blood test and initiation of antimalarial protocol as prescribed by physician.`;
+                let severity = Math.max(7, Math.round(confInfected / 10)); 
+                severityValue.textContent = `${severity} / 10`;
+                
+                for(let i=0; i<severity; i++) {
+                    setTimeout(() => { ticks[i].classList.add(i > 7 ? 'active-danger' : 'active-warning'); }, i * 100);
+                }
+
+                recommendationText.innerHTML = `<strong>* IMMEDIATE CLINICAL REVIEW REQUIRED</strong><br/>
+                Plasmodium falciparum signatures detected. Highly recommend confirmatory lab test (pCR/RDT) and initiation of antimalarial protocol as prescribed by resident physician.`;
             } else {
-                resultBadge.innerHTML = `<i class="fa-solid fa-shield-virus me-2"></i>Uninfected`;
-                resultBadge.classList.add("result-uninfected");
-                confidenceBar.classList.add("fill-success");
+                resultBadge.innerHTML = `<i class="fa-solid fa-shield-virus me-3"></i>LOW RISK - UNINFECTED`;
+                resultBadge.className = "status-badge-large status-low-risk";
                 
-                recommendationText.innerHTML = `No malaria parasites detected in this slide area. <strong>Patient screen is clear.</strong> Follow standard medical discharge procedures.`;
+                let severity = Math.max(1, Math.round(confInfected / 10)); 
+                severityValue.textContent = `${severity} / 10`;
+
+                for(let i=0; i<severity; i++) {
+                    setTimeout(() => { ticks[i].classList.add('active-success'); }, i * 100);
+                }
+
+                recommendationText.innerHTML = `<strong>* NO PARASITIC ACTIVITY DETECTED</strong><br/>
+                Sample appears functionally uninfected. Screen is clear for Plasmodium signatures. Standard discharge procedures or alternative diagnosis paths recommended.`;
             }
         }
 
-        // Handle Reset
-        resetBtn.addEventListener("click", function() {
-            // Reset form
-            uploadForm.reset();
+        // Reset flow
+        resetBtn.addEventListener("click", () => {
             fileInput.value = "";
+            previewContainer.classList.add("d-none");
+            dropZone.classList.remove("d-none");
+            predictBtn.classList.add("d-none");
             
-            // Reset UI
-            previewContainer.style.display = "none";
-            dropZone.style.display = "block";
-            predictBtn.disabled = true;
-            
-            resultArea.style.display = "none";
-            resultPlaceholder.style.display = "block";
-            errorAlert.classList.add("d-none");
+            resultArea.classList.add("d-none");
+            resultPlaceholder.classList.remove("d-none");
+            document.getElementById("uploadTimeStrap").innerText = "Waiting for upload...";
+            imagePreview.style.filter = "none";
+            btnsToggle.forEach((b,idx) => { b.classList.toggle('active', idx === 0) });
+        });
+        
+        // Metrics toggle
+        const metricsToggle = document.getElementById('metricsToggle');
+        metricsToggle.addEventListener('click', () => {
+            const icon = metricsToggle.querySelector('.fa-chevron-down, .fa-chevron-up');
+            if(icon.classList.contains('fa-chevron-down')) {
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            } else {
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
         });
     });
 </script>
