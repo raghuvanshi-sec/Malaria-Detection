@@ -257,271 +257,215 @@
 
   <div class="tab-pane fade" id="tab-analytics" role="tabpanel">
     
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3" style="border-color: var(--border-color) !important;">
+    <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2" style="border-color: var(--border-color) !important;">
         <div>
-            <h4 class="mb-0 fw-bold"><i class="fa-solid fa-chart-line text-primary me-2"></i> Model Intelligence</h4>
-            <div class="settings-subtitle fw-bold">Performance Analytics & Diagnostics</div>
+            <h5 class="mb-0 fw-bold"><i class="fa-solid fa-chart-line text-primary me-2"></i> Model Intelligence</h5>
         </div>
-        <div class="d-flex align-items-center">
-            <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill"><i class="fa-solid fa-code-compare me-1"></i> Compare Versions</span>
+        <div>
+            <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 px-2 py-1 rounded-pill" style="font-size: 0.75rem;"><i class="fa-solid fa-code-compare me-1"></i> Compare</span>
         </div>
     </div>
 
-    <!-- 1. TOP PERFORMANCE SNAPSHOT -->
-    <div class="row g-3 mb-4">
-        <!-- Accuracy -->
-        <div class="col-xl pr-2">
-            <div class="glass-card p-3">
-                <div class="d-flex justify-content-between align-items-start">
-                    <span class="text-muted small fw-bold text-uppercase" title="Ratio of correctly predicted observations to the total observations">Accuracy <i class="fa-regular fa-circle-question ms-1" style="font-size: 10px;"></i></span>
-                    <i class="fa-solid fa-bullseye text-primary opacity-50"></i>
+    <!-- 1. COMPACT PERFORMANCE SNAPSHOT -->
+    <div class="row g-2 mb-2">
+        <div class="col-xl pr-1">
+            <div class="glass-card p-2 px-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">Accuracy</span>
+                    <i class="fa-solid fa-bullseye text-primary opacity-50 small"></i>
                 </div>
-                <div class="mt-2 d-flex align-items-end justify-content-between">
-                    <h3 class="mb-0 fw-bold metric-glow">95.8%</h3>
-                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">+1.2%</span>
-                </div>
-            </div>
-        </div>
-        <!-- Precision -->
-        <div class="col-xl pr-2">
-            <div class="glass-card p-3">
-                <div class="d-flex justify-content-between align-items-start">
-                    <span class="text-muted small fw-bold text-uppercase" title="Ratio of correctly predicted positive observations to the total predicted positive observations">Precision <i class="fa-regular fa-circle-question ms-1" style="font-size: 10px;"></i></span>
-                    <i class="fa-solid fa-crosshairs text-info opacity-50"></i>
-                </div>
-                <div class="mt-2 d-flex align-items-end justify-content-between">
-                    <h3 class="mb-0 fw-bold">96.3%</h3>
-                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">+0.8%</span>
+                <div class="mt-1 d-flex align-items-end justify-content-between">
+                    <h5 class="mb-0 fw-bold metric-glow">95.8%</h5>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25" style="font-size: 0.6rem;">+1.2%</span>
                 </div>
             </div>
         </div>
-        <!-- Recall -->
-        <div class="col-xl pr-2">
-            <div class="glass-card p-3">
-                <div class="d-flex justify-content-between align-items-start">
-                    <span class="text-muted small fw-bold text-uppercase" title="Ratio of correctly predicted positive observations to the all observations in actual class">Recall (Sens.) <i class="fa-regular fa-circle-question ms-1" style="font-size: 10px;"></i></span>
-                    <i class="fa-solid fa-users-viewfinder text-warning opacity-50"></i>
+        <div class="col-xl pr-1">
+            <div class="glass-card p-2 px-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">Precision</span>
+                    <i class="fa-solid fa-crosshairs text-info opacity-50 small"></i>
                 </div>
-                <div class="mt-2 d-flex align-items-end justify-content-between">
-                    <h3 class="mb-0 fw-bold">95.4%</h3>
-                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">+1.5%</span>
-                </div>
-            </div>
-        </div>
-        <!-- F1 Score -->
-        <div class="col-xl pr-2">
-            <div class="glass-card p-3">
-                <div class="d-flex justify-content-between align-items-start">
-                    <span class="text-muted small fw-bold text-uppercase" title="The weighted average of Precision and Recall">F1 Score <i class="fa-regular fa-circle-question ms-1" style="font-size: 10px;"></i></span>
-                    <i class="fa-solid fa-scale-balanced text-primary opacity-50"></i>
-                </div>
-                <div class="mt-2 d-flex align-items-end justify-content-between">
-                    <h3 class="mb-0 fw-bold">95.8%</h3>
-                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">+1.1%</span>
+                <div class="mt-1 d-flex align-items-end justify-content-between">
+                    <h5 class="mb-0 fw-bold">96.3%</h5>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25" style="font-size: 0.6rem;">+0.8%</span>
                 </div>
             </div>
         </div>
-        <!-- AUC-ROC -->
+        <div class="col-xl pr-1">
+            <div class="glass-card p-2 px-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">Recall</span>
+                    <i class="fa-solid fa-users-viewfinder text-warning opacity-50 small"></i>
+                </div>
+                <div class="mt-1 d-flex align-items-end justify-content-between">
+                    <h5 class="mb-0 fw-bold">95.4%</h5>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25" style="font-size: 0.6rem;">+1.5%</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl pr-1">
+            <div class="glass-card p-2 px-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">F1 Score</span>
+                    <i class="fa-solid fa-scale-balanced text-primary opacity-50 small"></i>
+                </div>
+                <div class="mt-1 d-flex align-items-end justify-content-between">
+                    <h5 class="mb-0 fw-bold">95.8%</h5>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25" style="font-size: 0.6rem;">+1.1%</span>
+                </div>
+            </div>
+        </div>
         <div class="col-xl">
-            <div class="glass-card p-3">
-                <div class="d-flex justify-content-between align-items-start">
-                    <span class="text-muted small fw-bold text-uppercase" title="Area under the ROC Curve indicating separability degree">AUC-ROC <i class="fa-regular fa-circle-question ms-1" style="font-size: 10px;"></i></span>
-                    <i class="fa-solid fa-chart-area text-danger opacity-50"></i>
+            <div class="glass-card p-2 px-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">AUC-ROC</span>
+                    <i class="fa-solid fa-chart-area text-danger opacity-50 small"></i>
                 </div>
-                <div class="mt-2 d-flex align-items-end justify-content-between">
-                    <h3 class="mb-0 fw-bold">0.985</h3>
-                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">+0.01</span>
+                <div class="mt-1 d-flex align-items-end justify-content-between">
+                    <h5 class="mb-0 fw-bold">0.985</h5>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25" style="font-size: 0.6rem;">+0.01</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-4 mb-4">
-        <!-- 2. TRAINING VISUALIZATION (Charts) -->
-        <div class="col-xl-8 col-lg-7">
-            <div class="glass-card h-100">
-                <div class="card-header-custom border-bottom" style="border-color: var(--border-color) !important;">
-                    <span><i class="fa-solid fa-chart-line"></i> Learning Curves Over Epochs</span>
+    <div class="row g-2 mb-2">
+        <!-- Main Core: Charts -->
+        <div class="col-xl-5 col-lg-6">
+            <div class="glass-card h-100 d-flex flex-column">
+                <div class="card-header-custom border-bottom py-2" style="border-color: var(--border-color) !important; font-size: 0.8rem;">
+                    <span><i class="fa-solid fa-chart-line"></i> Learning Curves (Epochs)</span>
                 </div>
-                <div class="card-body p-4">
-                    <div class="row h-100">
-                        <div class="col-md-6 border-end" style="border-color: var(--border-color) !important;">
-                            <span class="fw-bold small text-muted text-uppercase d-block mb-2 text-center">Accuracy</span>
-                            <canvas id="accuracyChart" height="200"></canvas>
+                <div class="card-body p-2 flex-grow-1">
+                    <div class="row h-100 g-2">
+                        <div class="col-sm-6 border-end" style="border-color: var(--border-color) !important;">
+                            <span class="fw-bold small text-muted text-uppercase d-block mb-1 text-center" style="font-size: 0.65rem;">Accuracy</span>
+                            <canvas id="accuracyChart" height="130"></canvas>
                         </div>
-                        <div class="col-md-6">
-                            <span class="fw-bold small text-muted text-uppercase d-block mb-2 text-center">Loss</span>
-                            <canvas id="lossChart" height="200"></canvas>
+                        <div class="col-sm-6">
+                            <span class="fw-bold small text-muted text-uppercase d-block mb-1 text-center" style="font-size: 0.65rem;">Loss</span>
+                            <canvas id="lossChart" height="130"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. CONFUSION MATRIX -->
-        <div class="col-xl-4 col-lg-5">
-            <div class="glass-card h-100">
-                <div class="card-header-custom border-bottom" style="border-color: var(--border-color) !important;">
-                    <span><i class="fa-solid fa-table-cells"></i> Validation Confusion Matrix</span>
+        <!-- Production Monitoring -->
+        <div class="col-xl-4 col-lg-6">
+            <div class="glass-card h-100 d-flex flex-column">
+                <div class="card-header-custom border-bottom py-2 d-flex justify-content-between align-items-center" style="border-color: var(--border-color) !important; font-size: 0.8rem;">
+                    <span><i class="fa-solid fa-satellite-dish text-success"></i> Real-time Prod Monitoring</span>
+                    <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-2" style="font-size: 0.6rem;"><i class="fa-solid fa-rss spin-anim opacity-50"></i> Live</span>
                 </div>
-                <div class="card-body p-4">
-                    
-                    <div class="matrix-grid">
+                <div class="card-body p-3">
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <label class="text-muted fw-bold text-uppercase d-block mb-0" style="font-size: 0.6rem;">Inference</label>
+                            <span class="fw-bold text-primary fs-5 mb-0" id="liveInferenceVal">112 ms</span>
+                        </div>
+                        <div class="col-6">
+                            <label class="text-muted fw-bold text-uppercase d-block mb-0" style="font-size: 0.6rem;">Latency</label>
+                            <span class="fw-bold text-success fs-5 mb-0" id="liveLatencyVal">42 ms</span>
+                        </div>
+                    </div>
+                    <div>
+                        <canvas id="prodBarChart" height="70"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confusion Matrix -->
+        <div class="col-xl-3 col-lg-12">
+            <div class="glass-card h-100">
+                <div class="card-header-custom border-bottom py-2" style="border-color: var(--border-color) !important; font-size: 0.8rem;">
+                    <span><i class="fa-solid fa-table-cells"></i> Validation Matrix</span>
+                </div>
+                <div class="card-body p-2 px-3">
+                    <div class="matrix-grid" style="gap: 4px;">
                         <div></div>
-                        <div class="matrix-label-top">Predicted Class</div>
-                        <div class="matrix-label-left">Actual Class</div>
+                        <div class="matrix-label-top" style="font-size: 0.6rem;">Pred Class</div>
+                        <div class="matrix-label-left" style="font-size: 0.6rem;">Act. Class</div>
                         
-                        <!-- Structure: T/L empty, Top Label, Left Label -->
-                        <div style="grid-column: 2; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 5px;" class="small fw-bold text-muted">Infected</div>
-                        <div style="grid-column: 3; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 5px;" class="small fw-bold text-muted">Uninfected</div>
+                        <div style="grid-column: 2; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 2px;" class="fw-bold text-muted" style="font-size: 0.6rem;">Inf.</div>
+                        <div style="grid-column: 3; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 2px;" class="fw-bold text-muted" style="font-size: 0.6rem;">Uninf.</div>
+                        <div style="grid-column: 1; grid-row: 3; display: flex; align-items: center; justify-content: flex-end; padding-right: 2px;" class="fw-bold text-muted" style="font-size: 0.6rem;">Inf.</div>
+                        <div style="grid-column: 1; grid-row: 4; display: flex; align-items: center; justify-content: flex-end; padding-right: 2px;" class="fw-bold text-muted" style="font-size: 0.6rem;">Uninf.</div>
                         
-                        <div style="grid-column: 1; grid-row: 3; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px;" class="small fw-bold text-muted">Infected</div>
-                        <div style="grid-column: 1; grid-row: 4; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px;" class="small fw-bold text-muted">Uninfected</div>
-                        
-                        <!-- Cells -->
-                        <div class="matrix-cell cell-tp" style="grid-column: 2; grid-row: 3;" title="True Positive">
-                            <div class="matrix-cell-value text-success">2,635</div>
-                            <div class="matrix-cell-title">True Positive</div>
+                        <div class="matrix-cell cell-tp pb-1 pt-1" style="grid-column: 2; grid-row: 3; padding: 0.5rem;" title="True Positive">
+                            <div class="matrix-cell-value text-success" style="font-size: 1.1rem;">2.6k</div>
                         </div>
-                        <div class="matrix-cell cell-fn" style="grid-column: 3; grid-row: 3;" title="False Negative">
-                            <div class="matrix-cell-value text-danger">128</div>
-                            <div class="matrix-cell-title">False Negative</div>
+                        <div class="matrix-cell cell-fn pb-1 pt-1" style="grid-column: 3; grid-row: 3; padding: 0.5rem;" title="False Negative">
+                            <div class="matrix-cell-value text-danger" style="font-size: 1.1rem;">128</div>
                         </div>
-                        <div class="matrix-cell cell-fp" style="grid-column: 2; grid-row: 4;" title="False Positive">
-                            <div class="matrix-cell-value text-danger">102</div>
-                            <div class="matrix-cell-title">False Positive</div>
+                        <div class="matrix-cell cell-fp pb-1 pt-1" style="grid-column: 2; grid-row: 4; padding: 0.5rem;" title="False Positive">
+                            <div class="matrix-cell-value text-danger" style="font-size: 1.1rem;">102</div>
                         </div>
-                        <div class="matrix-cell cell-tn" style="grid-column: 3; grid-row: 4;" title="True Negative">
-                            <div class="matrix-cell-value text-success">2,652</div>
-                            <div class="matrix-cell-title">True Negative</div>
+                        <div class="matrix-cell cell-tn pb-1 pt-1" style="grid-column: 3; grid-row: 4; padding: 0.5rem;" title="True Negative">
+                            <div class="matrix-cell-value text-success" style="font-size: 1.1rem;">2.6k</div>
                         </div>
                     </div>
-
-                    <div class="mt-3 pt-3 border-top d-flex justify-content-between" style="border-color: var(--border-color) !important;">
-                        <span class="small fw-bold text-muted text-uppercase">Bal. Accuracy</span>
-                        <span class="small fw-bold">95.6%</span>
-                    </div>
-
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-4 mb-5">
-        <!-- 4. DATASET INSIGHTS & ARCHITECTURE -->
+    <!-- 3. DATASET & ARCHITECTURE -->
+    <div class="row g-2">
         <div class="col-xl-6">
-            <div class="glass-card mb-4">
-                <div class="card-header-custom border-bottom" style="border-color: var(--border-color) !important;">
+            <div class="glass-card mb-2">
+                <div class="card-header-custom border-bottom py-2" style="border-color: var(--border-color) !important; font-size: 0.8rem;">
                     <span><i class="fa-solid fa-database"></i> Training Dataset Insights</span>
                 </div>
-                <div class="card-body p-4 row align-items-center">
-                    <div class="col-md-5 text-center mb-3 mb-md-0">
-                        <canvas id="datasetPieChart" width="100" height="100"></canvas>
-                        <div class="mt-3 fw-bold fs-5">27,558</div>
-                        <div class="small text-muted text-uppercase fw-bold">Total Cell Images</div>
+                <div class="card-body p-3 row align-items-center m-0">
+                    <div class="col-sm-4 text-center mb-2 mb-sm-0 p-0">
+                        <canvas id="datasetPieChart" width="80" height="80"></canvas>
+                        <div class="mt-2 fw-bold" style="font-size: 0.9rem;">27,558</div>
+                        <div class="text-muted text-uppercase fw-bold" style="font-size: 0.6rem;">Cell Images</div>
                     </div>
-                    <div class="col-md-7">
-                        <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
-                            <li class="d-flex justify-content-between">
-                                <span class="text-muted"><i class="fa-solid fa-layer-group me-2"></i>Data Split</span>
-                                <span class="fw-bold">80% Train / 20% Val</span>
-                            </li>
-                            <li class="d-flex justify-content-between">
-                                <span class="text-muted"><i class="fa-solid fa-expand me-2"></i>Base Resolution</span>
-                                <span class="fw-bold">128 x 128 px</span>
-                            </li>
-                            <li class="d-flex justify-content-between">
-                                <span class="text-muted"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Augmentation</span>
-                                <span class="fw-bold">Rot, Flip, Zoom, Shift</span>
-                            </li>
-                            <li class="d-flex justify-content-between">
-                                <span class="text-muted"><i class="fa-solid fa-file-csv me-2"></i>Source</span>
-                                <span class="fw-bold">NIH Malaria Dataset</span>
-                            </li>
+                    <div class="col-sm-8 p-0 px-sm-3">
+                        <ul class="list-unstyled mb-0 d-flex flex-column gap-2" style="font-size: 0.8rem;">
+                            <li class="d-flex justify-content-between"><span class="text-muted"><i class="fa-solid fa-layer-group me-2"></i>Data Split</span><span class="fw-bold text-end">80% Train / 20% Val</span></li>
+                            <li class="d-flex justify-content-between"><span class="text-muted"><i class="fa-solid fa-expand me-2"></i>Base Res</span><span class="fw-bold text-end">128 x 128 px</span></li>
+                            <li class="d-flex justify-content-between"><span class="text-muted"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Augmentation</span><span class="fw-bold text-end">Rot, Flip, Zoom</span></li>
                         </ul>
                     </div>
                 </div>
             </div>
-
-            <div class="glass-card">
-                <div class="card-header-custom border-bottom" style="border-color: var(--border-color) !important;">
-                    <span><i class="fa-solid fa-sitemap"></i> Model Architecture Explorer</span>
+            
+            <div class="p-2 rounded mt-2" style="background-color: var(--bg-color); border: 1px solid var(--border-color);">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold" style="font-size: 0.75rem;">Data Drift Metric (KS Test)</span>
+                    <span class="text-success fw-bold" style="font-size: 0.7rem;">Stable (0.012)</span>
                 </div>
-                <div class="card-body p-0">
-                    <div class="accordion accordion-flush" id="architectureAccordion">
-                        <div class="accordion-item" style="background-color: transparent !important; border-bottom: 1px solid var(--border-color);">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button shadow-none text-main fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#archOne" style="background-color: transparent;">
-                                    Base CNN Structure
-                                </button>
-                            </h2>
-                            <div id="archOne" class="accordion-collapse collapse show">
-                                <div class="accordion-body text-muted small pb-3">
-                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Architecture</span> <span class="text-main">MobileNetV2</span></div>
-                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Input Shape</span> <span class="text-main">(128, 128, 3)</span></div>
-                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Top Layer Type</span> <span class="text-main">GlobalAveragePooling2D</span></div>
-                                    <div class="d-flex justify-content-between"><span class="fw-bold">Output Activ.</span> <span class="text-main">Sigmoid (Binary)</span></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item" style="background-color: transparent !important;">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed shadow-none text-main fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#archTwo" style="background-color: transparent;">
-                                    Hyperparameters & Params
-                                </button>
-                            </h2>
-                            <div id="archTwo" class="accordion-collapse collapse">
-                                <div class="accordion-body text-muted small pb-3">
-                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Total Parameters</span> <span class="text-main">2,259,265</span></div>
-                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Trainable Params</span> <span class="text-main">1,211,265</span></div>
-                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Optimizer</span> <span class="text-main">Adam (lr=0.001)</span></div>
-                                    <div class="d-flex justify-content-between"><span class="fw-bold">Frozen Layers</span> <span class="text-main">Top 40 (Fine-tuned)</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="progress" style="height: 4px; background-color: var(--border-color);">
+                    <div class="progress-bar bg-success" style="width: 12%;"></div>
                 </div>
             </div>
         </div>
 
-        <!-- 6. PRODUCTION MONITORING -->
         <div class="col-xl-6">
             <div class="glass-card h-100">
-                <div class="card-header-custom border-bottom d-flex justify-content-between align-items-center" style="border-color: var(--border-color) !important;">
-                    <span><i class="fa-solid fa-satellite-dish text-success"></i> Real-time Prod Monitoring</span>
-                    <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-2"><i class="fa-solid fa-rss spin-anim opacity-50"></i> Live Sync</span>
+                <div class="card-header-custom border-bottom py-2" style="border-color: var(--border-color) !important; font-size: 0.8rem;">
+                    <span><i class="fa-solid fa-sitemap"></i> Model Architecture Explorer</span>
                 </div>
-                <div class="card-body p-4">
-                    
-                    <div class="row g-4 mb-4">
-                        <div class="col-6">
-                            <label class="small text-muted fw-bold text-uppercase d-block mb-1">Avg Inference Time</label>
-                            <h3 class="fw-bold text-primary mb-0" id="liveInferenceVal">112 ms</h3>
+                <div class="card-body p-2">
+                    <div class="row g-2">
+                        <div class="col-sm-6 text-muted" style="font-size: 0.8rem;">
+                            <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Architecture</span> <span class="text-main">MobileNetV2</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Input Shape</span> <span class="text-main">(128, 128, 3)</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Top Layer</span> <span class="text-main">GlobalAvgPool2D</span></div>
+                            <div class="d-flex justify-content-between"><span class="fw-bold">Activation</span> <span class="text-main">Sigmoid</span></div>
                         </div>
-                        <div class="col-6">
-                            <label class="small text-muted fw-bold text-uppercase d-block mb-1">API Latency</label>
-                            <h3 class="fw-bold text-success mb-0" id="liveLatencyVal">42 ms</h3>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="small text-muted fw-bold text-uppercase d-block mb-3">Live Prediction Distribution (Last 24h)</label>
-                        <canvas id="prodBarChart" height="120"></canvas>
-                    </div>
-
-                    <div class="p-3 rounded" style="background-color: var(--bg-color); border: 1px solid var(--border-color);">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="small fw-bold">Data Drift Metric (KS Test)</span>
-                            <span class="small text-success fw-bold">Stable (0.012)</span>
-                        </div>
-                        <div class="progress" style="height: 6px; background-color: var(--border-color);">
-                            <div class="progress-bar bg-success" style="width: 12%;"></div>
-                        </div>
-                        <div class="mt-2 text-muted" style="font-size: 0.7rem;">
-                            Model behavior aligns with training distribution. No immediate retraining required.
+                        <div class="col-sm-6 text-muted border-start" style="font-size: 0.8rem; border-color: var(--border-color) !important;">
+                            <div class="d-flex justify-content-between mb-1"><span class="fw-bold ps-2">Total Params</span> <span class="text-main">2.25M</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="fw-bold ps-2">Trainable</span> <span class="text-main">1.21M</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="fw-bold ps-2">Optimizer</span> <span class="text-main">Adam</span></div>
+                            <div class="d-flex justify-content-between"><span class="fw-bold ps-2">Learning Rate</span> <span class="text-main">0.001</span></div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
