@@ -433,3 +433,141 @@ textarea.medical-notes:focus {
   border-color: var(--primary);
   outline: none;
 }
+
+/* SETTINGS COMPONENTS */
+/* Form Toggles (Switches) */
+.form-switch .form-check-input {
+  width: 40px;
+  height: 20px;
+  background-color: var(--border-color);
+  border-color: var(--border-color);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.form-switch .form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+.form-switch .form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(29, 78, 216, 0.25);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28255, 255, 255, 1%29'/%3e%3c/svg%3e");
+}
+
+/* Custom Sliders */
+.form-range {
+  width: 100%;
+  height: 6px;
+  background-color: var(--border-color);
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.form-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s;
+}
+.form-range::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+/* System Header Override */
+.settings-subtitle {
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-top: 4px;
+}
+
+/* Sticky Right Panel */
+.sticky-panel {
+  position: sticky;
+  top: 90px;
+}
+
+/* API Key mask input */
+.api-key-input {
+  font-family: monospace;
+  letter-spacing: 2px;
+  background-color: var(--bg-color);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  color: var(--text-muted);
+}
+
+/* Tables */
+.table-clinical {
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+.table-clinical thead th {
+  border-bottom: 2px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+.table-clinical td {
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color);
+  background-color: transparent !important;
+}
+
+/* Toast Configuration */
+.toast-container {
+  position: fixed;
+  bottom: 60px; /* Above footer */
+  right: 20px;
+  z-index: 1055;
+}
+
+/* Footer Status Strip */
+.footer-strip {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #0b1120; /* Deep navy */
+  color: #94a3b8;
+  padding: 6px 24px;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1040;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.footer-strip .status-indicator {
+  width: 6px;
+  height: 6px;
+}
+.footer-strip-items {
+  display: flex;
+  gap: 20px;
+}
+
+/* Charts & Progress */
+.health-progress-bg {
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+.health-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease-in-out;
+}
+.fill-primary { background: var(--primary); }
+.fill-warning { background: var(--warning); }
+.fill-info { background: var(--info); }
