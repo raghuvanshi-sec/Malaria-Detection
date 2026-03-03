@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - AI Malaria Detection System{% endblock %}
+
+{% block nav_dashboard %}active{% endblock %}
+{% block nav_upload %}{% endblock %}
+
+{% block content %}
+<h4 class="mb-4 text-dark fw-bold">Diagnostic Dashboard</h4>
+
+<!-- Stats Row -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3 mb-md-0">
+        <div class="custom-card stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-bullseye"></i></div>
+            <div class="stat-details">
+                <h3>95%+</h3>
+                <p>Model Accuracy</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3 mb-md-0">
+        <div class="custom-card stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-images"></i></div>
+            <div class="stat-details">
+                <h3>27.5k</h3>
+                <p>Total Dataset Images</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3 mb-md-0">
+        <div class="custom-card stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-network-wired"></i></div>
+            <div class="stat-details">
+                <h3 style="font-size: 1.2rem; line-height: 1.5rem;">MobileNetV2</h3>
+                <p>CNN Architecture</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3 mb-md-0">
+        <div class="custom-card stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-expand"></i></div>
+            <div class="stat-details">
+                <h3>128x128</h3>
+                <p>Input Resolution</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Upload Section -->
+    <div class="col-md-6 mb-4">
+        <div class="custom-card">
+            <div class="card-header-custom">
+                <i class="fa-solid fa-file-medical"></i> New Analysis
+            </div>
+            <div class="card-body p-4">
+                <form id="uploadForm">
+                    <div class="upload-area" id="dropZone">
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <h5 class="text-dark fw-bold" id="uploadText">Select Blood Smear Image</h5>
+                        <p class="text-muted small" id="uploadSubtext">Drag and drop here, or click to browse</p>
+                        <input type="file" id="fileInput" name="file" accept="image/jpeg, image/png, image/jpg">
+                    </div>
+                    
+                    <div class="image-preview-container" id="previewContainer">
+                        <img id="imagePreview" src="" alt="Image Preview">
+                        <p class="text-muted small mt-2 mb-0" id="fileName"></p>
+                    </div>
+
+                    <button type="submit" class="btn-medical" id="predictBtn" disabled>
+                        <i class="fa-solid fa-microscope"></i> Run Prediction
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Section -->
+    <div class="col-md-6 mb-4">
+        <div class="custom-card">
+            <div class="card-header-custom">
+                <i class="fa-solid fa-clipboard-check"></i> Analysis Results
+            </div>
+            <div class="card-body p-4 text-center">
+                
+                <!-- Placeholder before prediction -->
+                <div id="resultPlaceholder" style="padding: 40px 0; color: #94a3b8;">
+                    <i class="fa-solid fa-vial-circle-check" style="font-size: 4rem; opacity: 0.2; margin-bottom: 16px;"></i>
+                    <p>Upload an image and run prediction to view results.</p>
+                </div>
+
+                <!-- Loader -->
+                <div class="loader-container" id="loader">
+                    <div class="spinner-border spinner-custom mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 class="text-dark">Analyzing slide...</h5>
+                    <p class="text-muted small">Applying Deep Learning model</p>
+                </div>
+
+                <!-- Actual Results -->
+                <div id="resultArea">
+                    <h6 class="text-muted text-uppercase fw-bold mb-2">Diagnosis</h6>
+                    
+                    <div id="resultBadge" class="result-badge"></div>
+                    
+                    <div class="text-start mt-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-bold text-dark small">AI Confidence Score</span>
+                            <span class="fw-bold text-dark small" id="confidenceText">0%</span>
+                        </div>
+                        <div class="confidence-meter">
+                            <div id="confidenceBar" class="confidence-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-box text-start">
+                        <h6 class="fw-bold text-dark"><i class="fa-solid fa-user-doctor text-primary me-2"></i>Recommendation</h6>
+                        <p id="recommendationText" class="mb-0 small text-muted"></p>
+                    </div>
+                    
+                    <button type="button" class="btn btn-outline-secondary btn-sm mt-4 w-100 py-2 fw-bold" id="resetBtn">
+                        <i class="fa-solid fa-rotate-right"></i> Analyze Another Slide
+                    </button>
+                </div>
+
+                <!-- Error Alert -->
+                <div class="alert alert-danger mt-3 d-none text-start" id="errorAlert"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const dropZone = document.getElementById("dropZone");
+        const fileInput = document.getElementById("fileInput");
+        const previewContainer = document.getElementById("previewContainer");
+        const imagePreview = document.getElementById("imagePreview");
+        const fileNameDisplay = document.getElementById("fileName");
+        const predictBtn = document.getElementById("predictBtn");
+        const uploadForm = document.getElementById("uploadForm");
+        
+        const resultPlaceholder = document.getElementById("resultPlaceholder");
+        const loader = document.getElementById("loader");
+        const resultArea = document.getElementById("resultArea");
+        const resultBadge = document.getElementById("resultBadge");
+        const confidenceText = document.getElementById("confidenceText");
+        const confidenceBar = document.getElementById("confidenceBar");
+        const recommendationText = document.getElementById("recommendationText");
+        const errorAlert = document.getElementById("errorAlert");
+        const resetBtn = document.getElementById("resetBtn");
+
+        // Handle Drag and Drop
+        dropZone.addEventListener("click", () => fileInput.click());
+        
+        dropZone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZone.classList.add("dragover");
+        });
+        
+        dropZone.addEventListener("dragleave", () => {
+            dropZone.classList.remove("dragover");
+        });
+        
+        dropZone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropZone.classList.remove("dragover");
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelection();
+            }
+        });
+
+        fileInput.addEventListener("change", handleFileSelection);
+
+        function handleFileSelection() {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                
+                // Display preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    previewContainer.style.display = "block";
+                    dropZone.style.display = "none";
+                }
+                reader.readAsDataURL(file);
+                
+                fileNameDisplay.textContent = file.name;
+                predictBtn.disabled = false;
+                
+                // Reset errors if any
+                errorAlert.classList.add("d-none");
+            }
+        }
+
+        // Handle Form Submit
+        uploadForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            if (!fileInput.files.length) return;
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            // UI Transitions
+            resultPlaceholder.style.display = "none";
+            resultArea.style.display = "none";
+            errorAlert.classList.add("d-none");
+            loader.style.display = "block";
+            predictBtn.disabled = true;
+
+            fetch("/predict", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json().then(data => ({status: response.status, body: data})))
+            .then(res => {
+                loader.style.display = "none";
+                
+                if (res.status !== 200 || res.body.error) {
+                    throw new Error(res.body.error || "Failed to process image.");
+                }
+                
+                displayResults(res.body);
+            })
+            .catch(error => {
+                loader.style.display = "none";
+                resultPlaceholder.style.display = "block";
+                predictBtn.disabled = false;
+                
+                errorAlert.textContent = error.message;
+                errorAlert.classList.remove("d-none");
+            });
+        });
+
+        function displayResults(data) {
+            resultArea.style.display = "block";
+            
+            // Reset bar properties
+            confidenceBar.style.width = "0%";
+            confidenceBar.className = "confidence-fill";
+            resultBadge.className = "result-badge";
+
+            // Format Confidence
+            const confValue = parseFloat(data.confidence);
+            confidenceText.textContent = confValue.toFixed(2) + "%";
+            
+            // Animate progress bar slightly delayed to ensure transition triggers
+            setTimeout(() => {
+                confidenceBar.style.width = confValue + "%";
+            }, 50);
+
+            if (data.class === "Parasitized") {
+                resultBadge.innerHTML = `<i class="fa-solid fa-virus me-2"></i>Parasitized`;
+                resultBadge.classList.add("result-parasitized");
+                confidenceBar.classList.add("fill-danger");
+                
+                recommendationText.innerHTML = `Plasmodium parasites detected. <strong>Immediate medical review required.</strong> Recommend confirmatory blood test and initiation of antimalarial protocol as prescribed by physician.`;
+            } else {
+                resultBadge.innerHTML = `<i class="fa-solid fa-shield-virus me-2"></i>Uninfected`;
+                resultBadge.classList.add("result-uninfected");
+                confidenceBar.classList.add("fill-success");
+                
+                recommendationText.innerHTML = `No malaria parasites detected in this slide area. <strong>Patient screen is clear.</strong> Follow standard medical discharge procedures.`;
+            }
+        }
+
+        // Handle Reset
+        resetBtn.addEventListener("click", function() {
+            // Reset form
+            uploadForm.reset();
+            fileInput.value = "";
+            
+            // Reset UI
+            previewContainer.style.display = "none";
+            dropZone.style.display = "block";
+            predictBtn.disabled = true;
+            
+            resultArea.style.display = "none";
+            resultPlaceholder.style.display = "block";
+            errorAlert.classList.add("d-none");
+        });
+    });
+</script>
+{% endblock %}
