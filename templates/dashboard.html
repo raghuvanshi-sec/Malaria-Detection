@@ -160,9 +160,9 @@
                     <i class="fa-solid fa-rotate-right"></i> Analyze Another Slide
                 </button>
                 <div class="d-flex flex-column gap-2">
-                    <button class="btn-action"><i class="fa-solid fa-file-pdf text-danger"></i> Generate PDF Report</button>
-                    <button class="btn-action"><i class="fa-solid fa-download text-primary"></i> Export Case Data (CSV)</button>
-                    <button class="btn-action"><i class="fa-solid fa-code-compare text-success"></i> Compare with Previous</button>
+                    <button class="btn-action" onclick="window.print()"><i class="fa-solid fa-file-pdf text-danger"></i> Generate PDF Report</button>
+                    <button class="btn-action" id="exportCsvBtn"><i class="fa-solid fa-download text-primary"></i> Export Case Data (CSV)</button>
+                    <button class="btn-action" onclick="alert('Compare with previous slide module will be unlocked in v2.0')"><i class="fa-solid fa-code-compare text-success"></i> Compare with Previous</button>
                 </div>
                 
                 <h6 class="fw-bold mt-4 mb-2 fs-6">Doctor's Notes</h6>
@@ -264,6 +264,7 @@
         const recommendationText = document.getElementById("recommendationText");
         const resetBtn = document.getElementById("resetBtn");
         const processTimeBanner = document.getElementById("processTimeBanner");
+        const exportCsvBtn = document.getElementById("exportCsvBtn");
         
         let currentZoom = 1;
         
@@ -292,6 +293,24 @@
             }
         });
         fileInput.addEventListener("change", handleFileSelection);
+
+        // CSV Export functionality
+        exportCsvBtn.addEventListener("click", () => {
+            let resStatus = resultBadge.innerText.includes("PARASITIZED") ? "Parasitized" : 
+                            resultBadge.innerText.includes("UNINFECTED") ? "Uninfected" : "N/A";
+            
+            const csvContent = "data:text/csv;charset=utf-8,Patient ID,Result,Infected Probability,Severity\n" + 
+                               "MLR-2026-0042," + resStatus + "," + probInfectedVal.innerText + "," + 
+                               severityValue.innerText.replace(" / 10", "");
+                               
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "patient_case_MLR-2026-0042.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
 
         function handleFileSelection() {
             if (fileInput.files.length > 0) {
