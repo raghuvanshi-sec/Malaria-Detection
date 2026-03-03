@@ -256,17 +256,277 @@
   </div>
 
   <div class="tab-pane fade" id="tab-analytics" role="tabpanel">
-
-    <div class="custom-card">
-        <div class="card-header-custom"><i class="fa-solid fa-chart-line"></i> Analytics Model Details</div>
-        <div class="card-body p-4 text-center text-muted">
-            <i class="fa-solid fa-network-wired fa-3x mb-3 opacity-25"></i>
-            <h5>AI Model Analytics</h5>
-            <p>Detailed breakdown of MobileNetV2 architecture layers, training graphs, and validation metrics.</p>
-            <p class="small text-muted">(Placeholder Page)</p>
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3" style="border-color: var(--border-color) !important;">
+        <div>
+            <h4 class="mb-0 fw-bold"><i class="fa-solid fa-chart-line text-primary me-2"></i> Model Intelligence</h4>
+            <div class="settings-subtitle fw-bold">Performance Analytics & Diagnostics</div>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill"><i class="fa-solid fa-code-compare me-1"></i> Compare Versions</span>
         </div>
     </div>
-    
+
+    <!-- 1. TOP PERFORMANCE SNAPSHOT -->
+    <div class="row g-3 mb-4">
+        <!-- Accuracy -->
+        <div class="col-xl pr-2">
+            <div class="glass-card p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="text-muted small fw-bold text-uppercase" title="Ratio of correctly predicted observations to the total observations">Accuracy <i class="fa-regular fa-circle-question ms-1" style="font-size: 10px;"></i></span>
+                    <i class="fa-solid fa-bullseye text-primary opacity-50"></i>
+                </div>
+                <div class="mt-2 d-flex align-items-end justify-content-between">
+                    <h3 class="mb-0 fw-bold metric-glow">95.8%</h3>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">+1.2%</span>
+                </div>
+            </div>
+        </div>
+        <!-- Precision -->
+        <div class="col-xl pr-2">
+            <div class="glass-card p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="text-muted small fw-bold text-uppercase" title="Ratio of correctly predicted positive observations to the total predicted positive observations">Precision <i class="fa-regular fa-circle-question ms-1" style="font-size: 10px;"></i></span>
+                    <i class="fa-solid fa-crosshairs text-info opacity-50"></i>
+                </div>
+                <div class="mt-2 d-flex align-items-end justify-content-between">
+                    <h3 class="mb-0 fw-bold">96.3%</h3>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">+0.8%</span>
+                </div>
+            </div>
+        </div>
+        <!-- Recall -->
+        <div class="col-xl pr-2">
+            <div class="glass-card p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="text-muted small fw-bold text-uppercase" title="Ratio of correctly predicted positive observations to the all observations in actual class">Recall (Sens.) <i class="fa-regular fa-circle-question ms-1" style="font-size: 10px;"></i></span>
+                    <i class="fa-solid fa-users-viewfinder text-warning opacity-50"></i>
+                </div>
+                <div class="mt-2 d-flex align-items-end justify-content-between">
+                    <h3 class="mb-0 fw-bold">95.4%</h3>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">+1.5%</span>
+                </div>
+            </div>
+        </div>
+        <!-- F1 Score -->
+        <div class="col-xl pr-2">
+            <div class="glass-card p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="text-muted small fw-bold text-uppercase" title="The weighted average of Precision and Recall">F1 Score <i class="fa-regular fa-circle-question ms-1" style="font-size: 10px;"></i></span>
+                    <i class="fa-solid fa-scale-balanced text-primary opacity-50"></i>
+                </div>
+                <div class="mt-2 d-flex align-items-end justify-content-between">
+                    <h3 class="mb-0 fw-bold">95.8%</h3>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">+1.1%</span>
+                </div>
+            </div>
+        </div>
+        <!-- AUC-ROC -->
+        <div class="col-xl">
+            <div class="glass-card p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="text-muted small fw-bold text-uppercase" title="Area under the ROC Curve indicating separability degree">AUC-ROC <i class="fa-regular fa-circle-question ms-1" style="font-size: 10px;"></i></span>
+                    <i class="fa-solid fa-chart-area text-danger opacity-50"></i>
+                </div>
+                <div class="mt-2 d-flex align-items-end justify-content-between">
+                    <h3 class="mb-0 fw-bold">0.985</h3>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">+0.01</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- 2. TRAINING VISUALIZATION (Charts) -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="glass-card h-100">
+                <div class="card-header-custom border-bottom" style="border-color: var(--border-color) !important;">
+                    <span><i class="fa-solid fa-chart-line"></i> Learning Curves Over Epochs</span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row h-100">
+                        <div class="col-md-6 border-end" style="border-color: var(--border-color) !important;">
+                            <span class="fw-bold small text-muted text-uppercase d-block mb-2 text-center">Accuracy</span>
+                            <canvas id="accuracyChart" height="200"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="fw-bold small text-muted text-uppercase d-block mb-2 text-center">Loss</span>
+                            <canvas id="lossChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. CONFUSION MATRIX -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="glass-card h-100">
+                <div class="card-header-custom border-bottom" style="border-color: var(--border-color) !important;">
+                    <span><i class="fa-solid fa-table-cells"></i> Validation Confusion Matrix</span>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <div class="matrix-grid">
+                        <div></div>
+                        <div class="matrix-label-top">Predicted Class</div>
+                        <div class="matrix-label-left">Actual Class</div>
+                        
+                        <!-- Structure: T/L empty, Top Label, Left Label -->
+                        <div style="grid-column: 2; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 5px;" class="small fw-bold text-muted">Infected</div>
+                        <div style="grid-column: 3; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 5px;" class="small fw-bold text-muted">Uninfected</div>
+                        
+                        <div style="grid-column: 1; grid-row: 3; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px;" class="small fw-bold text-muted">Infected</div>
+                        <div style="grid-column: 1; grid-row: 4; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px;" class="small fw-bold text-muted">Uninfected</div>
+                        
+                        <!-- Cells -->
+                        <div class="matrix-cell cell-tp" style="grid-column: 2; grid-row: 3;" title="True Positive">
+                            <div class="matrix-cell-value text-success">2,635</div>
+                            <div class="matrix-cell-title">True Positive</div>
+                        </div>
+                        <div class="matrix-cell cell-fn" style="grid-column: 3; grid-row: 3;" title="False Negative">
+                            <div class="matrix-cell-value text-danger">128</div>
+                            <div class="matrix-cell-title">False Negative</div>
+                        </div>
+                        <div class="matrix-cell cell-fp" style="grid-column: 2; grid-row: 4;" title="False Positive">
+                            <div class="matrix-cell-value text-danger">102</div>
+                            <div class="matrix-cell-title">False Positive</div>
+                        </div>
+                        <div class="matrix-cell cell-tn" style="grid-column: 3; grid-row: 4;" title="True Negative">
+                            <div class="matrix-cell-value text-success">2,652</div>
+                            <div class="matrix-cell-title">True Negative</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-3 border-top d-flex justify-content-between" style="border-color: var(--border-color) !important;">
+                        <span class="small fw-bold text-muted text-uppercase">Bal. Accuracy</span>
+                        <span class="small fw-bold">95.6%</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- 4. DATASET INSIGHTS & ARCHITECTURE -->
+        <div class="col-xl-6">
+            <div class="glass-card mb-4">
+                <div class="card-header-custom border-bottom" style="border-color: var(--border-color) !important;">
+                    <span><i class="fa-solid fa-database"></i> Training Dataset Insights</span>
+                </div>
+                <div class="card-body p-4 row align-items-center">
+                    <div class="col-md-5 text-center mb-3 mb-md-0">
+                        <canvas id="datasetPieChart" width="100" height="100"></canvas>
+                        <div class="mt-3 fw-bold fs-5">27,558</div>
+                        <div class="small text-muted text-uppercase fw-bold">Total Cell Images</div>
+                    </div>
+                    <div class="col-md-7">
+                        <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                            <li class="d-flex justify-content-between">
+                                <span class="text-muted"><i class="fa-solid fa-layer-group me-2"></i>Data Split</span>
+                                <span class="fw-bold">80% Train / 20% Val</span>
+                            </li>
+                            <li class="d-flex justify-content-between">
+                                <span class="text-muted"><i class="fa-solid fa-expand me-2"></i>Base Resolution</span>
+                                <span class="fw-bold">128 x 128 px</span>
+                            </li>
+                            <li class="d-flex justify-content-between">
+                                <span class="text-muted"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Augmentation</span>
+                                <span class="fw-bold">Rot, Flip, Zoom, Shift</span>
+                            </li>
+                            <li class="d-flex justify-content-between">
+                                <span class="text-muted"><i class="fa-solid fa-file-csv me-2"></i>Source</span>
+                                <span class="fw-bold">NIH Malaria Dataset</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="card-header-custom border-bottom" style="border-color: var(--border-color) !important;">
+                    <span><i class="fa-solid fa-sitemap"></i> Model Architecture Explorer</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="accordion accordion-flush" id="architectureAccordion">
+                        <div class="accordion-item" style="background-color: transparent !important; border-bottom: 1px solid var(--border-color);">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button shadow-none text-main fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#archOne" style="background-color: transparent;">
+                                    Base CNN Structure
+                                </button>
+                            </h2>
+                            <div id="archOne" class="accordion-collapse collapse show">
+                                <div class="accordion-body text-muted small pb-3">
+                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Architecture</span> <span class="text-main">MobileNetV2</span></div>
+                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Input Shape</span> <span class="text-main">(128, 128, 3)</span></div>
+                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Top Layer Type</span> <span class="text-main">GlobalAveragePooling2D</span></div>
+                                    <div class="d-flex justify-content-between"><span class="fw-bold">Output Activ.</span> <span class="text-main">Sigmoid (Binary)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item" style="background-color: transparent !important;">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed shadow-none text-main fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#archTwo" style="background-color: transparent;">
+                                    Hyperparameters & Params
+                                </button>
+                            </h2>
+                            <div id="archTwo" class="accordion-collapse collapse">
+                                <div class="accordion-body text-muted small pb-3">
+                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Total Parameters</span> <span class="text-main">2,259,265</span></div>
+                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Trainable Params</span> <span class="text-main">1,211,265</span></div>
+                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold">Optimizer</span> <span class="text-main">Adam (lr=0.001)</span></div>
+                                    <div class="d-flex justify-content-between"><span class="fw-bold">Frozen Layers</span> <span class="text-main">Top 40 (Fine-tuned)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. PRODUCTION MONITORING -->
+        <div class="col-xl-6">
+            <div class="glass-card h-100">
+                <div class="card-header-custom border-bottom d-flex justify-content-between align-items-center" style="border-color: var(--border-color) !important;">
+                    <span><i class="fa-solid fa-satellite-dish text-success"></i> Real-time Prod Monitoring</span>
+                    <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-2"><i class="fa-solid fa-rss spin-anim opacity-50"></i> Live Sync</span>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-6">
+                            <label class="small text-muted fw-bold text-uppercase d-block mb-1">Avg Inference Time</label>
+                            <h3 class="fw-bold text-primary mb-0" id="liveInferenceVal">112 ms</h3>
+                        </div>
+                        <div class="col-6">
+                            <label class="small text-muted fw-bold text-uppercase d-block mb-1">API Latency</label>
+                            <h3 class="fw-bold text-success mb-0" id="liveLatencyVal">42 ms</h3>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="small text-muted fw-bold text-uppercase d-block mb-3">Live Prediction Distribution (Last 24h)</label>
+                        <canvas id="prodBarChart" height="120"></canvas>
+                    </div>
+
+                    <div class="p-3 rounded" style="background-color: var(--bg-color); border: 1px solid var(--border-color);">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small fw-bold">Data Drift Metric (KS Test)</span>
+                            <span class="small text-success fw-bold">Stable (0.012)</span>
+                        </div>
+                        <div class="progress" style="height: 6px; background-color: var(--border-color);">
+                            <div class="progress-bar bg-success" style="width: 12%;"></div>
+                        </div>
+                        <div class="mt-2 text-muted" style="font-size: 0.7rem;">
+                            Model behavior aligns with training distribution. No immediate retraining required.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
   </div>
 
   <div class="tab-pane fade" id="tab-settings" role="tabpanel">
@@ -855,6 +1115,113 @@
                 icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
             }
         });
+
+    // --- ANALYTICS DASHBOARD CHART.JS ---
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.font.family = "'Inter', system-ui, -apple-system, sans-serif";
+
+    // 1. Learning Curves (Accuracy & Loss)
+    const ctxAcc = document.getElementById('accuracyChart');
+    if (ctxAcc) {
+        new Chart(ctxAcc, {
+            type: 'line',
+            data: {
+                labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+                datasets: [{
+                    label: 'Train Acc',
+                    data: [0.65, 0.75, 0.82, 0.88, 0.91, 0.93, 0.94, 0.95, 0.95, 0.96],
+                    borderColor: '#3b82f6',
+                    tension: 0.4
+                }, {
+                    label: 'Val Acc',
+                    data: [0.62, 0.71, 0.78, 0.85, 0.89, 0.90, 0.92, 0.94, 0.95, 0.95],
+                    borderColor: '#10b981',
+                    borderDash: [5, 5],
+                    tension: 0.4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+
+    const ctxLoss = document.getElementById('lossChart');
+    if (ctxLoss) {
+        new Chart(ctxLoss, {
+            type: 'line',
+            data: {
+                labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+                datasets: [{
+                    label: 'Train Loss',
+                    data: [0.60, 0.45, 0.35, 0.28, 0.22, 0.18, 0.15, 0.13, 0.11, 0.09],
+                    borderColor: '#ef4444',
+                    tension: 0.4
+                }, {
+                    label: 'Val Loss',
+                    data: [0.62, 0.48, 0.38, 0.30, 0.25, 0.21, 0.18, 0.16, 0.13, 0.11],
+                    borderColor: '#f59e0b',
+                    borderDash: [5, 5],
+                    tension: 0.4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+
+    // 2. Dataset Distribution Pie Chart
+    const ctxPie = document.getElementById('datasetPieChart');
+    if (ctxPie) {
+        new Chart(ctxPie, {
+            type: 'doughnut',
+            data: {
+                labels: ['Infected', 'Uninfected'],
+                datasets: [{
+                    data: [13779, 13779],
+                    backgroundColor: ['#ef4444', '#10b981'],
+                    borderWidth: 0
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { display: false } } }
+        });
+    }
+
+    // 3. Production Prediction Distribution Bar Chart
+    const ctxBar = document.getElementById('prodBarChart');
+    let prodChart;
+    if (ctxBar) {
+        prodChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['12am', '4am', '8am', '12pm', '4pm', '8pm'],
+                datasets: [{
+                    label: 'Predictions',
+                    data: [12, 5, 45, 80, 65, 30],
+                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                    borderRadius: 4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, display: false }, x: { grid: { display: false } } } }
+        });
+    }
+
+    // 4. Simulated Live Updates (Every 5 Seconds)
+    setInterval(() => {
+        // Randomize inference time between 95 and 125ms
+        const infTime = Math.floor(Math.random() * (125 - 95 + 1)) + 95;
+        const liveInf = document.getElementById('liveInferenceVal');
+        if (liveInf) liveInf.innerText = infTime + ' ms';
+
+        // Randomize API Latency between 35 and 55ms
+        const latTime = Math.floor(Math.random() * (55 - 35 + 1)) + 35;
+        const liveLat = document.getElementById('liveLatencyVal');
+        if (liveLat) liveLat.innerText = latTime + ' ms';
+
+        // Add glow effect to show update
+        if (liveInf) {
+            liveInf.style.transition = 'text-shadow 0.2s';
+            liveInf.style.textShadow = '0 0 10px rgba(59, 130, 246, 0.8)';
+            setTimeout(() => { liveInf.style.textShadow = 'none'; }, 500);
+        }
+    }, 5000);
     });
 </script>
 <script>

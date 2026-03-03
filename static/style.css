@@ -34,10 +34,38 @@
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --border-color: #334155;
-  --primary: #3b82f6;
-  --primary-hover: #60a5fa;
+  --primary: #60a5fa;       /* Lighter blue for dark mode */
+  --primary-hover: #93c5fd;
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* Dark Mode Bootstrap Overrides */
+[data-theme="dark"] .text-dark { color: var(--text-main) !important; }
+[data-theme="dark"] .bg-light, [data-theme="dark"] .bg-white { background-color: var(--bg-color) !important; color: var(--text-main) !important; }
+[data-theme="dark"] .text-muted { color: var(--text-muted) !important; }
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .case-input {
+  background-color: rgba(15, 23, 42, 0.5) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus,
+[data-theme="dark"] .case-input:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 0.25rem rgba(96, 165, 250, 0.25) !important;
+}
+
+[data-theme="dark"] .card-header-custom {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .navbar-custom, [data-theme="dark"] .footer-strip {
+  background-color: #020617; /* Even darker navy base for header/footer */
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
 body {
@@ -571,3 +599,75 @@ textarea.medical-notes:focus {
 .fill-primary { background: var(--primary); }
 .fill-warning { background: var(--warning); }
 .fill-info { background: var(--info); }
+
+/* ANALYTICS PAGE MODS */
+.glass-card {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.metric-glow {
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+/* Confusion Matrix Grid */
+.matrix-grid {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  grid-template-rows: auto 1fr 1fr;
+  gap: 8px;
+  text-align: center;
+}
+.matrix-label-top {
+  grid-column: 2 / span 2;
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.matrix-label-left {
+  grid-row: 2 / span 2;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+.matrix-cell {
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.cell-tp { background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+.cell-tn { background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+.cell-fp { background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
+.cell-fn { background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
+
+.matrix-cell-title {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.matrix-cell-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
