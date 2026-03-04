@@ -4,6 +4,9 @@ import io
 import time
 import numpy as np
 from PIL import Image
+import hashlib
+import random
+from datetime import datetime, timedelta
 from tensorflow.keras.models import load_model
 
 app = Flask(__name__)
@@ -44,7 +47,73 @@ def process_image(img_file):
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('dashboard.html')
+    recent_patients = []
+    
+    # Helper to generate consistent mock data from filename
+    def generate_mock_patient(filename, label):
+        seed = int(hashlib.md5(filename.encode()).hexdigest(), 16) % (10**8)
+        rng = random.Random(seed)
+        
+        first_names = ["Jonathan", "Sarah", "Michael", "Emily", "David", "Jessica", "James", "Maria", "Robert", "Linda", "William", "Elizabeth"]
+        last_names = ["Doe", "Jenkins", "Wong", "Rosa", "Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia"]
+        
+        name = f"{rng.choice(first_names)} {rng.choice(last_names)}"
+        age = rng.randint(5, 85)
+        gender = rng.choice(['M', 'F'])
+        pid = f"#PID-{rng.randint(1000, 9999)}"
+        
+        if label == "Parasitized":
+            diagnosis = rng.choice(["Parasitized (P. falciparum)", "Parasitized (P. vivax)", "Parasitized (P. ovale)"])
+            risk = "High Risk"
+            confidence = round(rng.uniform(92.0, 99.8), 1)
+        else:
+            diagnosis = "Uninfected"
+            risk = "Low Risk"
+            confidence = round(rng.uniform(94.0, 99.9), 1)
+            
+        days_ago = rng.randint(0, 5)
+        date_str = (datetime.now() - timedelta(days=days_ago)).strftime('%Y-%m-%d')
+        
+        return {
+            'date': date_str,
+            'id': pid,
+            'name': name,
+            'age': age,
+            'gender': gender,
+            'diagnosis': diagnosis,
+            'confidence': confidence,
+            'risk': risk,
+            'filename': filename
+        }
+
+    parasitized_dir = os.path.join('cell_images', 'Parasitized')
+    uninfected_dir = os.path.join('cell_images', 'Uninfected')
+    
+    try:
+        if os.path.exists(parasitized_dir) and os.path.exists(uninfected_dir):
+            p_files = [f for f in os.listdir(parasitized_dir) if f.endswith('.png')]
+            u_files = [f for f in os.listdir(uninfected_dir) if f.endswith('.png')]
+            
+            p_sample = sorted(p_files)[:5]
+            u_sample = sorted(u_files)[:5]
+            
+            for f in p_sample:
+                recent_patients.append(generate_mock_patient(f, 'Parasitized'))
+            for f in u_sample:
+                recent_patients.append(generate_mock_patient(f, 'Uninfected'))
+                
+            if len(u_files) > 5:
+                inc = generate_mock_patient(sorted(u_files)[5], 'Uninfected')
+                inc['diagnosis'] = "Inconclusive (Re-test)"
+                inc['risk'] = "Moderate"
+                inc['confidence'] = round(random.uniform(55.0, 75.0), 1)
+                recent_patients.append(inc)
+                
+            recent_patients.sort(key=lambda x: x['date'], reverse=True)
+    except Exception as e:
+        print(f"Failed parsing dataset: {e}")
+
+    return render_template('dashboard.html', recent_patients=recent_patients)
 
 @app.route('/api/realtime', methods=['GET'])
 def realtime_data():
