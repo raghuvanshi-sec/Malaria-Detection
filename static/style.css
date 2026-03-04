@@ -671,3 +671,41 @@ textarea.medical-notes:focus {
   color: var(--text-main);
 }
 
+/* PATIENT RECORDS UI */
+.pulse-anim {
+  animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+  70% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+  100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+
+.glowing-border-danger {
+  box-shadow: 0 0 10px rgba(220, 53, 69, 0.5), inset 0 0 5px rgba(220, 53, 69, 0.2);
+  border: 1px solid rgba(220, 53, 69, 0.8) !important;
+}
+
+.table-row-hover {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.table-row-hover:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  transform: translateY(-1px);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}

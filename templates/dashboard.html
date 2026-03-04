@@ -243,106 +243,401 @@
 
   <div class="tab-pane fade" id="tab-records" role="tabpanel">
 
-    <div class="custom-card">
-        <div class="card-header-custom"><i class="fa-solid fa-file-medical"></i> Patient Records</div>
-        <div class="card-body p-4 text-center text-muted">
-            <i class="fa-solid fa-database fa-3x mb-3 opacity-25"></i>
-            <h5>Patient Records Database</h5>
-            <p>This module connects to the hospital EMR system to retrieve patient histories.</p>
-            <p class="small text-muted">(Placeholder Page)</p>
+    <!-- Header & Security Compliance Panel -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom" style="border-color: var(--border-color) !important;">
+        <div>
+            <h4 class="mb-0 fw-bold"><i class="fa-solid fa-users-viewfinder text-primary me-2"></i> Patient EMR Integration</h4>
+            <div class="text-muted mt-1">Live synchronized patient database and diagnosis history.</div>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <span class="badge bg-success bg-opacity-10 text-success border border-success p-2"><i class="fa-solid fa-link me-2"></i>Secure EMR Connected</span>
+            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary p-2"><i class="fa-solid fa-shield-halved me-2"></i>AES-256 Encrypted</span>
+            <span class="badge bg-info bg-opacity-10 text-info border border-info p-2"><i class="fa-solid fa-clipboard-check me-2"></i>Audit Active</span>
+            <span class="badge bg-dark border p-2"><i class="fa-solid fa-user-doctor me-2"></i>Role: Doctor</span>
+        </div>
+    </div>
+
+    <!-- 1. TOP SUMMARY METRICS (4 Cards) -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="glass-card p-4 h-100 d-flex align-items-center">
+                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle me-3"><i class="fa-solid fa-users fa-2x"></i></div>
+                <div>
+                    <div class="text-muted text-uppercase fw-bold small mb-1">Patients Analyzed</div>
+                    <div class="fw-bold fs-3 text-main" id="rt-patients" style="transition: color 0.3s, text-shadow 0.3s;">1204</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="glass-card p-4 h-100 d-flex align-items-center position-relative overflow-hidden" style="border-color: rgba(220,53,69,0.3) !important; box-shadow: 0 0 15px rgba(220,53,69,0.1) inset;">
+                <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-circle me-3 position-relative">
+                    <i class="fa-solid fa-triangle-exclamation fa-2x relative z-1"></i>
+                    <span class="position-absolute top-0 start-0 w-100 h-100 rounded-circle border border-danger opacity-50 pulse-anim"></span>
+                </div>
+                <div>
+                    <div class="text-muted text-uppercase fw-bold small mb-1">High Risk (30d)</div>
+                    <div class="fw-bold fs-3 text-danger" id="rt-highrisk" style="transition: color 0.3s, text-shadow 0.3s; text-shadow: 0 0 10px rgba(220,53,69,0.5);">87</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="glass-card p-4 h-100 d-flex align-items-center">
+                <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle me-3"><i class="fa-solid fa-brain fa-2x"></i></div>
+                <div>
+                    <div class="text-muted text-uppercase fw-bold small mb-1">Avg AI Confidence</div>
+                    <div class="fw-bold fs-3 text-success" style="transition: color 0.3s, text-shadow 0.3s;"><span id="rt-confidence">98.2</span>%</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="glass-card p-4 h-100 d-flex align-items-center">
+                <div class="bg-info bg-opacity-10 text-info p-3 rounded-circle me-3"><i class="fa-solid fa-calendar-check fa-2x"></i></div>
+                <div>
+                    <div class="text-muted text-uppercase fw-bold small mb-1">Latest Diagnosis</div>
+                    <div class="fw-bold fs-5 text-main">Today, 09:41</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. SEARCH & FILTER BAR -->
+    <div class="glass-card p-4 mb-4">
+        <form class="row g-3 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label text-muted fw-bold small text-uppercase">Patient ID</label>
+                <input type="text" class="form-control bg-dark border-secondary text-light custom-input" placeholder="e.g. PID-1024">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-muted fw-bold small text-uppercase">Full Name</label>
+                <input type="text" class="form-control bg-dark border-secondary text-light custom-input" placeholder="Search by name...">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-muted fw-bold small text-uppercase">Date Range</label>
+                <input type="date" class="form-control bg-dark border-secondary text-light custom-input">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-muted fw-bold small text-uppercase">Risk Level</label>
+                <select class="form-select bg-dark border-secondary text-light custom-input">
+                    <option selected>All Levels</option>
+                    <option value="high">High Risk</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="low">Low Risk</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="button" class="btn btn-primary w-100 fw-bold"><i class="fa-solid fa-magnifying-glass me-2"></i>Search</button>
+                <button type="button" class="btn btn-outline-secondary fw-bold" title="Clear Filters"><i class="fa-solid fa-rotate-left"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 3. PATIENT RECORDS TABLE -->
+    <div class="glass-card mb-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover table-dark table-borderless align-middle patient-table mb-0">
+                <thead class="border-bottom" style="border-color: var(--border-color) !important;">
+                    <tr>
+                        <th class="py-3 px-4 text-muted text-uppercase small fw-bold">Date <i class="fa-solid fa-sort ms-1 opacity-50 cursor-pointer"></i></th>
+                        <th class="py-3 px-3 text-muted text-uppercase small fw-bold">Patient ID</th>
+                        <th class="py-3 px-3 text-muted text-uppercase small fw-bold">Full Name</th>
+                        <th class="py-3 px-3 text-muted text-uppercase small fw-bold">Age / Gender</th>
+                        <th class="py-3 px-3 text-muted text-uppercase small fw-bold">AI Diagnosis</th>
+                        <th class="py-3 px-3 text-muted text-uppercase small fw-bold">Confidence <i class="fa-solid fa-sort ms-1 opacity-50 cursor-pointer"></i></th>
+                        <th class="py-3 px-3 text-muted text-uppercase small fw-bold">Risk Level <i class="fa-solid fa-sort ms-1 opacity-50 cursor-pointer"></i></th>
+                        <th class="py-3 px-4 text-muted text-uppercase small fw-bold text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Row 1: High Risk -->
+                    <tr class="table-row-hover" style="border-left: 4px solid var(--bs-danger); background-color: rgba(220,53,69,0.05);">
+                        <td class="py-3 px-4 text-light">2026-03-04</td>
+                        <td class="py-3 px-3 text-muted font-monospace small">#PID-8721</td>
+                        <td class="py-3 px-3 fw-bold text-light">Jonathan Doe</td>
+                        <td class="py-3 px-3 text-muted">45 · M</td>
+                        <td class="py-3 px-3"><span class="text-danger fw-bold"><i class="fa-solid fa-viruses me-2"></i>Parasitized (P. falciparum)</span></td>
+                        <td class="py-3 px-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold text-success">99.4%</span>
+                                <div class="sparkline-trend text-success"><i class="fa-solid fa-arrow-up-right-dots"></i></div>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3"><span class="badge bg-danger bg-opacity-10 text-danger border border-danger rounded-pill px-3 py-1" style="box-shadow: 0 0 8px rgba(220,53,69,0.4);"><i class="fa-solid fa-circle-exclamation me-1"></i>High Risk</span></td>
+                        <td class="py-3 px-4 text-end">
+                            <button class="btn btn-sm btn-outline-light me-1" data-bs-toggle="modal" data-bs-target="#patientDetailModal"><i class="fa-solid fa-eye"></i> View</button>
+                            <button class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-file-pdf"></i></button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Row 2: Low Risk -->
+                    <tr class="table-row-hover" style="border-left: 4px solid var(--bs-success);">
+                        <td class="py-3 px-4 text-light">2026-03-03</td>
+                        <td class="py-3 px-3 text-muted font-monospace small">#PID-8719</td>
+                        <td class="py-3 px-3 fw-bold text-light">Sarah Jenkins</td>
+                        <td class="py-3 px-3 text-muted">28 · F</td>
+                        <td class="py-3 px-3"><span class="text-success fw-bold"><i class="fa-solid fa-shield-virus me-2"></i>Uninfected</span></td>
+                        <td class="py-3 px-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold text-success">98.1%</span>
+                                <div class="sparkline-trend text-muted opacity-50"><i class="fa-solid fa-arrow-right"></i></div>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3"><span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-1"><i class="fa-solid fa-check me-1"></i>Low Risk</span></td>
+                        <td class="py-3 px-4 text-end">
+                            <button class="btn btn-sm btn-outline-light me-1" data-bs-toggle="modal" data-bs-target="#patientDetailModal"><i class="fa-solid fa-eye"></i> View</button>
+                            <button class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-file-pdf"></i></button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 3: Moderate Risk -->
+                    <tr class="table-row-hover" style="border-left: 4px solid var(--bs-warning);">
+                        <td class="py-3 px-4 text-light">2026-03-02</td>
+                        <td class="py-3 px-3 text-muted font-monospace small">#PID-8710</td>
+                        <td class="py-3 px-3 fw-bold text-light">Michael Wong</td>
+                        <td class="py-3 px-3 text-muted">62 · M</td>
+                        <td class="py-3 px-3"><span class="text-warning fw-bold"><i class="fa-solid fa-microscope me-2"></i>Inconclusive (Re-test)</span></td>
+                        <td class="py-3 px-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold text-warning">64.5%</span>
+                                <div class="sparkline-trend text-warning"><i class="fa-solid fa-arrow-down-right-dots"></i></div>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3"><span class="badge bg-warning bg-opacity-10 text-warning border border-warning rounded-pill px-3 py-1"><i class="fa-solid fa-triangle-exclamation me-1"></i>Moderate</span></td>
+                        <td class="py-3 px-4 text-end">
+                            <button class="btn btn-sm btn-outline-light me-1" data-bs-toggle="modal" data-bs-target="#patientDetailModal"><i class="fa-solid fa-eye"></i> View</button>
+                            <button class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-file-pdf"></i></button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 4: High Risk -->
+                    <tr class="table-row-hover" style="border-left: 4px solid var(--bs-danger); background-color: rgba(220,53,69,0.05);">
+                        <td class="py-3 px-4 text-light">2026-03-01</td>
+                        <td class="py-3 px-3 text-muted font-monospace small">#PID-8699</td>
+                        <td class="py-3 px-3 fw-bold text-light">Emily Rosa</td>
+                        <td class="py-3 px-3 text-muted">12 · F</td>
+                        <td class="py-3 px-3"><span class="text-danger fw-bold"><i class="fa-solid fa-viruses me-2"></i>Parasitized (P. vivax)</span></td>
+                        <td class="py-3 px-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold text-success">96.7%</span>
+                                <div class="sparkline-trend text-info"><i class="fa-solid fa-arrow-up-right-dots"></i></div>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3"><span class="badge bg-danger bg-opacity-10 text-danger border border-danger rounded-pill px-3 py-1" style="box-shadow: 0 0 8px rgba(220,53,69,0.4);"><i class="fa-solid fa-circle-exclamation me-1"></i>High Risk</span></td>
+                        <td class="py-3 px-4 text-end">
+                            <button class="btn btn-sm btn-outline-light me-1" data-bs-toggle="modal" data-bs-target="#patientDetailModal"><i class="fa-solid fa-eye"></i> View</button>
+                            <button class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-file-pdf"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="card-footer px-4 py-3 d-flex justify-content-between align-items-center border-top" style="border-color: var(--border-color) !important; background-color: rgba(0,0,0,0.2);">
+            <div class="text-muted small">
+                Showing <span class="fw-bold text-light">1-4</span> of <span class="fw-bold text-light">1,204</span> records
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <select class="form-select form-select-sm bg-dark border-secondary text-muted custom-input" style="width: auto;">
+                    <option value="10">10 per page</option>
+                    <option value="25">25 per page</option>
+                    <option value="50">50 per page</option>
+                </select>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item disabled"><a class="page-link bg-dark border-secondary text-muted" href="#">Previous</a></li>
+                        <li class="page-item active"><a class="page-link bg-primary border-primary" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link bg-dark border-secondary text-light" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link bg-dark border-secondary text-light" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link bg-dark border-secondary text-light" href="#">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
     
   </div>
 
+  <!-- PATIENT DETAIL MODAL (Within Tab bounds structurally for now) -->
+  <div class="modal fade" id="patientDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content glass-card border p-1" style="border-color: rgba(255,255,255,0.1) !important;">
+            <div class="modal-header border-bottom py-3 px-4" style="border-color: var(--border-color) !important;">
+                <h5 class="modal-title fw-bold text-light"><i class="fa-solid fa-address-card text-primary me-2"></i> Patient Demographic & Clinical History</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 bg-dark rounded-bottom">
+                <div class="row g-4">
+                    <!-- Left Col -->
+                    <div class="col-lg-4 d-flex flex-column gap-4">
+                        <div class="p-4 rounded border" style="background-color: var(--bg-color); border-color: var(--border-color) !important;">
+                            <div class="text-center mb-4">
+                                <div class="bg-secondary bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                                    <i class="fa-solid fa-user fa-3x text-muted"></i>
+                                </div>
+                                <h4 class="fw-bold mb-1">Jonathan Doe</h4>
+                                <div class="text-muted font-monospace"><i class="fa-solid fa-fingerprint me-2"></i>#PID-8721</div>
+                            </div>
+                            
+                            <ul class="list-unstyled d-flex flex-column gap-3 fs-6">
+                                <li class="d-flex justify-content-between border-bottom pb-2" style="border-color: var(--border-color)!important;"><span class="text-muted">Age / Gender</span><span class="fw-bold">45 / Male</span></li>
+                                <li class="d-flex justify-content-between border-bottom pb-2" style="border-color: var(--border-color)!important;"><span class="text-muted">Blood Group</span><span class="fw-bold text-danger">O+</span></li>
+                                <li class="d-flex justify-content-between border-bottom pb-2" style="border-color: var(--border-color)!important;"><span class="text-muted">Admit Date</span><span class="fw-bold">2026-03-04</span></li>
+                                <li class="d-flex justify-content-between"><span class="text-muted">Attending</span><span class="fw-bold"><i class="fa-solid fa-user-doctor me-2 text-primary"></i>Dr. A. Raghuvanshi</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 rounded border h-100" style="background-color: var(--bg-color); border-color: var(--border-color) !important;">
+                            <h6 class="fw-bold text-muted text-uppercase small mb-3"><i class="fa-solid fa-pen-to-square me-2"></i> Clinical Notes</h6>
+                            <textarea class="form-control bg-dark border-secondary text-light custom-input mb-3" rows="5" placeholder="Add clinical notes..." style="resize: none;">Patient presented with high fever (39.5°C), chills, and fatigue. Travel history to endemic region noted. Immediate blood smear requested. AI flagged as High Risk (Falciparum).</textarea>
+                            <button class="btn btn-outline-success w-100 fw-bold"><i class="fa-solid fa-floppy-disk me-2"></i>Save Notes</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Col -->
+                    <div class="col-lg-8">
+                        <div class="p-4 rounded border mb-4 d-flex flex-column d-sm-flex flex-sm-row justify-content-between align-items-sm-center gap-3" style="background-color: rgba(220,53,69,0.05); border-color: rgba(220,53,69,0.2) !important; border-left: 4px solid var(--bs-danger) !important; box-shadow: inset 0 0 20px rgba(220,53,69,0.05);">
+                            <div>
+                                <h5 class="fw-bold text-danger mb-1"><i class="fa-solid fa-viruses me-2"></i> AI Diagnosis: Parasitized (P. falciparum)</h5>
+                                <div class="text-muted fs-6">Model Output Confidence: <strong class="text-success ms-1">99.4%</strong></div>
+                            </div>
+                            <div class="text-sm-end">
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger rounded-pill px-4 py-2 fs-6 mb-2 d-inline-block" style="box-shadow: 0 0 15px rgba(220,53,69,0.5);"><i class="fa-solid fa-circle-exclamation me-2"></i>High Risk Patient</span>
+                                <div class="text-muted small">Flagged for immediate review</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-12">
+                                <h6 class="fw-bold text-muted text-uppercase small mb-3"><i class="fa-solid fa-microscope me-2"></i> Captured Scans / Smears</h6>
+                                <div class="d-flex gap-3 overflow-auto pb-2 custom-scrollbar">
+                                    <div class="border rounded p-2 text-center" style="border-color: var(--border-color) !important; min-width: 140px; background-color: var(--bg-color);">
+                                        <div class="bg-dark rounded mb-2 d-flex align-items-center justify-content-center" style="height: 100px;">
+                                            <i class="fa-solid fa-image fa-2x text-muted opacity-50"></i>
+                                        </div>
+                                        <div class="small fw-bold">Smear #1</div>
+                                        <div class="small text-muted" style="font-size: 0.65rem;">Uninfected</div>
+                                    </div>
+                                    <div class="border rounded p-2 text-center border-danger" style="background-color: rgba(220,53,69,0.05); min-width: 140px; box-shadow: 0 0 10px rgba(220,53,69,0.1);">
+                                        <div class="bg-dark rounded mb-2 d-flex align-items-center justify-content-center border border-danger border-opacity-50" style="height: 100px;">
+                                            <i class="fa-solid fa-disease fa-2x text-danger opacity-75 pulse-anim"></i>
+                                        </div>
+                                        <div class="small fw-bold text-danger">Smear #2</div>
+                                        <div class="small text-danger" style="font-size: 0.65rem;">Parasitized (Falciparum)</div>
+                                    </div>
+                                    <div class="border rounded p-2 text-center" style="border-color: var(--border-color) !important; min-width: 140px; background-color: var(--bg-color);">
+                                        <div class="bg-dark rounded mb-2 d-flex align-items-center justify-content-center" style="height: 100px;">
+                                            <i class="fa-solid fa-image fa-2x text-muted opacity-50"></i>
+                                        </div>
+                                        <div class="small fw-bold">Smear #3</div>
+                                        <div class="small text-muted" style="font-size: 0.65rem;">Uninfected</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h6 class="fw-bold text-muted text-uppercase small mb-3"><i class="fa-solid fa-chart-area me-2"></i> AI Confidence Trend (Historical Tests)</h6>
+                        <div class="p-3 rounded border w-100 d-flex justify-content-center align-items-center position-relative" style="background-color: var(--bg-color); border-color: var(--border-color) !important; height: 160px;">
+                            <!-- CSS simulated chart lines -->
+                            <div class="position-absolute bottom-0 start-0 w-100 h-100 d-flex align-items-end justify-content-between p-4" style="opacity: 0.3;">
+                                <div style="width: 15%; height: 20%; background: linear-gradient(to top, var(--bs-success), transparent);"></div>
+                                <div style="width: 15%; height: 25%; background: linear-gradient(to top, var(--bs-success), transparent);"></div>
+                                <div style="width: 15%; height: 15%; background: linear-gradient(to top, var(--bs-success), transparent);"></div>
+                                <div style="width: 15%; height: 40%; background: linear-gradient(to top, var(--bs-warning), transparent);"></div>
+                                <div style="width: 15%; height: 95%; background: linear-gradient(to top, var(--bs-danger), transparent);"></div>
+                            </div>
+                            <span class="text-muted fw-bold position-relative z-1"><i class="fa-solid fa-lock me-2"></i> EMR Trend Analytics requires full API sync.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top py-3 px-4 bg-dark rounded-bottom" style="border-color: var(--border-color) !important;">
+                <button type="button" class="btn btn-outline-danger me-auto fw-bold" onclick="if(confirm('SECURITY ALERT: Are you sure you want to permanently delete Patient ID #PID-8721 from the EMR registry? This action cannot be undone and will be audit-logged.')) alert('Deletion request logged.');"><i class="fa-solid fa-trash me-2"></i>Delete Record</button>
+                <button type="button" class="btn btn-outline-secondary fw-bold" data-bs-dismiss="modal">Close View</button>
+                <button type="button" class="btn btn-primary fw-bold px-4"><i class="fa-solid fa-file-pdf me-2"></i> Download Full EMR PDF</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
   <div class="tab-pane fade" id="tab-analytics" role="tabpanel">
     
-    <div class="d-flex justify-content-between align-items-center mb-1 border-bottom pb-1" style="border-color: var(--border-color) !important;">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom" style="border-color: var(--border-color) !important;">
         <div>
-            <h6 class="mb-0 fw-bold"><i class="fa-solid fa-chart-line text-primary me-2"></i> Model Intelligence</h6>
+            <h4 class="mb-0 fw-bold"><i class="fa-solid fa-chart-line text-primary me-2"></i> Model Intelligence</h4>
+            <div class="text-muted mt-1">Comprehensive AI monitoring, performance metrics, and dataset diagnostics.</div>
         </div>
         <div>
-            <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 px-2 rounded-pill" style="font-size: 0.65rem;"><i class="fa-solid fa-code-compare me-1"></i> Compare</span>
+            <button class="btn btn-outline-primary px-4 py-2 fw-bold shadow-sm"><i class="fa-solid fa-code-compare me-2"></i> Compare Versions</button>
         </div>
     </div>
 
-    <!-- 1. COMPACT PERFORMANCE SNAPSHOT -->
-    <div class="row g-1 mb-1">
-        <div class="col-xl pr-1">
-            <div class="glass-card p-1 px-2">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">Accuracy</span>
-                </div>
-                <div class="mt-1 d-flex align-items-end justify-content-between">
-                    <h6 class="mb-0 fw-bold metric-glow">95.8%</h6>
-                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 px-1 py-0" style="font-size: 0.55rem;">+1.2%</span>
+    <!-- 1. PERFORMANCE SNAPSHOT -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl mb-2">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-center">
+                <div class="text-muted small fw-bold text-uppercase mb-2">Accuracy</div>
+                <div class="d-flex align-items-end justify-content-between">
+                    <h3 class="mb-0 fw-bold metric-glow text-main"><span id="rt-accuracy" style="transition: color 0.3s, text-shadow 0.3s;">95.8</span>%</h3>
+                    <span class="badge bg-success bg-opacity-25 text-success px-2 py-1 fs-6 rounded"><i class="fa-solid fa-arrow-up me-1"></i>1.2%</span>
                 </div>
             </div>
         </div>
-        <div class="col-xl pr-1">
-            <div class="glass-card p-1 px-2">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">Precision</span>
-                </div>
-                <div class="mt-1 d-flex align-items-end justify-content-between">
-                    <h6 class="mb-0 fw-bold">96.3%</h6>
-                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 px-1 py-0" style="font-size: 0.55rem;">+0.8%</span>
+        <div class="col-xl mb-2">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-center">
+                <div class="text-muted small fw-bold text-uppercase mb-2">Precision</div>
+                <div class="d-flex align-items-end justify-content-between">
+                    <h3 class="mb-0 fw-bold text-main"><span id="rt-precision" style="transition: color 0.3s, text-shadow 0.3s;">96.3</span>%</h3>
+                    <span class="badge bg-success bg-opacity-25 text-success px-2 py-1 fs-6 rounded"><i class="fa-solid fa-arrow-up me-1"></i>0.8%</span>
                 </div>
             </div>
         </div>
-        <div class="col-xl pr-1">
-            <div class="glass-card p-1 px-2">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">Recall</span>
-                </div>
-                <div class="mt-1 d-flex align-items-end justify-content-between">
-                    <h6 class="mb-0 fw-bold">95.4%</h6>
-                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 px-1 py-0" style="font-size: 0.55rem;">+1.5%</span>
+        <div class="col-xl mb-2">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-center">
+                <div class="text-muted small fw-bold text-uppercase mb-2">Recall (Sens.)</div>
+                <div class="d-flex align-items-end justify-content-between">
+                    <h3 class="mb-0 fw-bold text-main"><span id="rt-recall" style="transition: color 0.3s, text-shadow 0.3s;">95.4</span>%</h3>
+                    <span class="badge bg-success bg-opacity-25 text-success px-2 py-1 fs-6 rounded"><i class="fa-solid fa-arrow-up me-1"></i>1.5%</span>
                 </div>
             </div>
         </div>
-        <div class="col-xl pr-1">
-            <div class="glass-card p-1 px-2">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">F1 Score</span>
-                </div>
-                <div class="mt-1 d-flex align-items-end justify-content-between">
-                    <h6 class="mb-0 fw-bold">95.8%</h6>
-                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 px-1 py-0" style="font-size: 0.55rem;">+1.1%</span>
+        <div class="col-xl mb-2">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-center">
+                <div class="text-muted small fw-bold text-uppercase mb-2">F1 Score</div>
+                <div class="d-flex align-items-end justify-content-between">
+                    <h3 class="mb-0 fw-bold text-main"><span id="rt-f1" style="transition: color 0.3s, text-shadow 0.3s;">95.8</span>%</h3>
+                    <span class="badge bg-success bg-opacity-25 text-success px-2 py-1 fs-6 rounded"><i class="fa-solid fa-arrow-up me-1"></i>1.1%</span>
                 </div>
             </div>
         </div>
-        <div class="col-xl">
-            <div class="glass-card p-1 px-2">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">AUC-ROC</span>
-                </div>
-                <div class="mt-1 d-flex align-items-end justify-content-between">
-                    <h6 class="mb-0 fw-bold">0.985</h6>
-                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 px-1 py-0" style="font-size: 0.55rem;">+0.01</span>
+        <div class="col-xl mb-2">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-center">
+                <div class="text-muted small fw-bold text-uppercase mb-2">AUC-ROC</div>
+                <div class="d-flex align-items-end justify-content-between">
+                    <h3 class="mb-0 fw-bold text-main">0.985</h3>
+                    <span class="badge bg-success bg-opacity-25 text-success px-2 py-1 fs-6 rounded"><i class="fa-solid fa-arrow-up me-1"></i>0.01</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-1 mb-1">
+    <div class="row g-4 mb-4">
         <!-- Main Core: Charts -->
-        <div class="col-xl-5 col-lg-6">
+        <div class="col-xl-5 col-lg-12">
             <div class="glass-card h-100 d-flex flex-column">
-                <div class="card-header-custom border-bottom py-1 px-2" style="border-color: var(--border-color) !important; font-size: 0.75rem;">
-                    <span><i class="fa-solid fa-chart-line"></i> Learning Curves</span>
+                <div class="card-header-custom border-bottom py-3 px-4" style="border-color: var(--border-color) !important;">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-chart-line me-2"></i> Learning Curves</h6>
                 </div>
-                <div class="card-body p-1 flex-grow-1">
-                    <div class="row h-100 g-1">
-                        <div class="col-sm-6 border-end" style="border-color: var(--border-color) !important;">
-                            <span class="fw-bold small text-muted text-uppercase d-block mb-0 text-center" style="font-size: 0.6rem;">Accuracy</span>
-                            <div style="position: relative; height: 90px; width: 100%;">
+                <div class="card-body p-4 flex-grow-1">
+                    <div class="row h-100 g-4">
+                        <div class="col-md-6 border-end" style="border-color: var(--border-color) !important;">
+                            <h6 class="fw-bold small text-muted text-uppercase text-center mb-3">Model Accuracy</h6>
+                            <div style="position: relative; height: 180px; width: 100%;">
                                 <canvas id="accuracyChart"></canvas>
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            <span class="fw-bold small text-muted text-uppercase d-block mb-0 text-center" style="font-size: 0.6rem;">Loss</span>
-                            <div style="position: relative; height: 90px; width: 100%;">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold small text-muted text-uppercase text-center mb-3">Model Loss</h6>
+                            <div style="position: relative; height: 180px; width: 100%;">
                                 <canvas id="lossChart"></canvas>
                             </div>
                         </div>
@@ -354,56 +649,60 @@
         <!-- Production Monitoring -->
         <div class="col-xl-4 col-lg-6">
             <div class="glass-card h-100 d-flex flex-column">
-                <div class="card-header-custom border-bottom py-1 px-2 d-flex justify-content-between align-items-center" style="border-color: var(--border-color) !important; font-size: 0.75rem;">
-                    <span><i class="fa-solid fa-satellite-dish text-success"></i> Prod Monitoring</span>
-                    <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-1 py-0" style="font-size: 0.55rem;"><i class="fa-solid fa-rss spin-anim opacity-50"></i> Live</span>
+                <div class="card-header-custom border-bottom py-3 px-4 d-flex justify-content-between align-items-center" style="border-color: var(--border-color) !important;">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-satellite-dish text-success me-2"></i> Prod Monitoring</h6>
+                    <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-3 py-1 fw-bold fs-6"><i class="fa-solid fa-rss spin-anim opacity-50 me-2"></i> Live Streams</span>
                 </div>
-                <div class="card-body p-2">
-                    <div class="row g-1 mb-1">
-                        <div class="col-6">
-                            <label class="text-muted fw-bold text-uppercase d-block mb-0" style="font-size: 0.55rem;">Inference</label>
-                            <span class="fw-bold text-primary mb-0" style="font-size: 1rem;" id="liveInferenceVal">112 ms</span>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="row g-4 mb-4">
+                        <div class="col-6 border-end" style="border-color: var(--border-color)!important;">
+                            <label class="text-muted fw-bold text-uppercase d-block mb-1 small">Avg Inference</label>
+                            <div class="fw-bold text-primary fs-3" id="liveInferenceVal">112 ms</div>
                         </div>
-                        <div class="col-6">
-                            <label class="text-muted fw-bold text-uppercase d-block mb-0" style="font-size: 0.55rem;">Latency</label>
-                            <span class="fw-bold text-success mb-0" style="font-size: 1rem;" id="liveLatencyVal">42 ms</span>
+                        <div class="col-6 ps-4">
+                            <label class="text-muted fw-bold text-uppercase d-block mb-1 small">API Latency</label>
+                            <div class="fw-bold text-success fs-3" id="liveLatencyVal">42 ms</div>
                         </div>
                     </div>
-                    <div style="position: relative; height: 60px; width: 100%; margin-top: 0.25rem;">
-                        <canvas id="prodBarChart"></canvas>
+                    
+                    <div class="mt-auto">
+                        <label class="text-muted fw-bold text-uppercase d-block mb-3 small">Prediction Distribution</label>
+                        <div style="position: relative; height: 100px; width: 100%;">
+                            <canvas id="prodBarChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Confusion Matrix -->
-        <div class="col-xl-3 col-lg-12">
+        <div class="col-xl-3 col-lg-6">
             <div class="glass-card h-100">
-                <div class="card-header-custom border-bottom py-1 px-2" style="border-color: var(--border-color) !important; font-size: 0.75rem;">
-                    <span><i class="fa-solid fa-table-cells"></i> Matrix</span>
+                <div class="card-header-custom border-bottom py-3 px-4" style="border-color: var(--border-color) !important;">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-table-cells me-2"></i> Confusion Matrix</h6>
                 </div>
-                <div class="card-body p-1 px-2">
-                    <div class="matrix-grid" style="gap: 2px;">
+                <div class="card-body p-4">
+                    <div class="matrix-grid mt-2" style="gap: 4px;">
                         <div></div>
-                        <div class="matrix-label-top" style="font-size: 0.55rem; margin-bottom: 0;">Pred Class</div>
-                        <div class="matrix-label-left" style="font-size: 0.55rem; margin-right: 0;">Act. Class</div>
+                        <div class="matrix-label-top fw-bold text-muted small text-uppercase">Predicted</div>
+                        <div class="matrix-label-left fw-bold text-muted small text-uppercase text-end pe-2">Actual</div>
                         
-                        <div style="grid-column: 2; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 1px;" class="fw-bold text-muted" style="font-size: 0.55rem;">Inf.</div>
-                        <div style="grid-column: 3; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 1px;" class="fw-bold text-muted" style="font-size: 0.55rem;">Uninf.</div>
-                        <div style="grid-column: 1; grid-row: 3; display: flex; align-items: center; justify-content: flex-end; padding-right: 1px;" class="fw-bold text-muted" style="font-size: 0.55rem;">Inf.</div>
-                        <div style="grid-column: 1; grid-row: 4; display: flex; align-items: center; justify-content: flex-end; padding-right: 1px;" class="fw-bold text-muted" style="font-size: 0.55rem;">Uninf.</div>
+                        <div style="grid-column: 2; grid-row: 2;" class="d-flex align-items-end justify-content-center pb-2 fw-bold text-muted small">Infected</div>
+                        <div style="grid-column: 3; grid-row: 2;" class="d-flex align-items-end justify-content-center pb-2 fw-bold text-muted small">Healthy</div>
+                        <div style="grid-column: 1; grid-row: 3;" class="d-flex align-items-center justify-content-end pe-3 fw-bold text-muted small">Infected</div>
+                        <div style="grid-column: 1; grid-row: 4;" class="d-flex align-items-center justify-content-end pe-3 fw-bold text-muted small">Healthy</div>
                         
-                        <div class="matrix-cell cell-tp py-0 px-0" style="grid-column: 2; grid-row: 3; height: 35px;" title="True Positive">
-                            <div class="matrix-cell-value text-success" style="font-size: 0.85rem;">2.6k</div>
+                        <div class="matrix-cell cell-tp rounded" style="grid-column: 2; grid-row: 3; height: 70px;" title="True Positive">
+                            <div class="matrix-cell-value text-success fs-4 fw-bold shadow-sm">2.6k</div>
                         </div>
-                        <div class="matrix-cell cell-fn py-0 px-0" style="grid-column: 3; grid-row: 3; height: 35px;" title="False Negative">
-                            <div class="matrix-cell-value text-danger" style="font-size: 0.85rem;">128</div>
+                        <div class="matrix-cell cell-fn rounded" style="grid-column: 3; grid-row: 3; height: 70px;" title="False Negative">
+                            <div class="matrix-cell-value text-danger fs-4 fw-bold shadow-sm">128</div>
                         </div>
-                        <div class="matrix-cell cell-fp py-0 px-0" style="grid-column: 2; grid-row: 4; height: 35px;" title="False Positive">
-                            <div class="matrix-cell-value text-danger" style="font-size: 0.85rem;">102</div>
+                        <div class="matrix-cell cell-fp rounded" style="grid-column: 2; grid-row: 4; height: 70px;" title="False Positive">
+                            <div class="matrix-cell-value text-danger fs-4 fw-bold shadow-sm">102</div>
                         </div>
-                        <div class="matrix-cell cell-tn py-0 px-0" style="grid-column: 3; grid-row: 4; height: 35px;" title="True Negative">
-                            <div class="matrix-cell-value text-success" style="font-size: 0.85rem;">2.6k</div>
+                        <div class="matrix-cell cell-tn rounded" style="grid-column: 3; grid-row: 4; height: 70px;" title="True Negative">
+                            <div class="matrix-cell-value text-success fs-4 fw-bold shadow-sm">2.6k</div>
                         </div>
                     </div>
                 </div>
@@ -412,59 +711,94 @@
     </div>
 
     <!-- 3. DATASET & ARCHITECTURE -->
-    <div class="row g-1">
+    <div class="row g-4 pb-4">
         <div class="col-xl-6">
-            <div class="glass-card mb-1">
-                <div class="card-header-custom border-bottom py-1 px-2" style="border-color: var(--border-color) !important; font-size: 0.75rem;">
-                    <span><i class="fa-solid fa-database"></i> Training Dataset Insights</span>
+            <div class="glass-card mb-4">
+                <div class="card-header-custom border-bottom py-3 px-4" style="border-color: var(--border-color) !important;">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-database me-2"></i> Training Dataset Insights</h6>
                 </div>
-                <div class="card-body p-2 row align-items-center m-0">
-                    <div class="col-sm-4 text-center p-0">
-                        <div style="position: relative; height: 60px; width: 60px; margin: 0 auto;">
-                            <canvas id="datasetPieChart"></canvas>
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-sm-5 text-center px-4 border-end" style="border-color: var(--border-color) !important;">
+                            <div style="position: relative; height: 130px; width: 130px; margin: 0 auto;">
+                                <canvas id="datasetPieChart"></canvas>
+                            </div>
+                            <div class="mt-3 fw-bold fs-3 text-main">27,558</div>
+                            <div class="text-muted text-uppercase fw-bold small">Total Cell Images</div>
                         </div>
-                        <div class="mt-1 fw-bold" style="font-size: 0.75rem;">27,558</div>
-                        <div class="text-muted text-uppercase fw-bold" style="font-size: 0.55rem;">Cell Images</div>
-                    </div>
-                    <div class="col-sm-8 p-0 px-sm-3">
-                        <ul class="list-unstyled mb-0 d-flex flex-column gap-2" style="font-size: 0.8rem;">
-                            <li class="d-flex justify-content-between"><span class="text-muted"><i class="fa-solid fa-layer-group me-2"></i>Data Split</span><span class="fw-bold text-end">80% Train / 20% Val</span></li>
-                            <li class="d-flex justify-content-between"><span class="text-muted"><i class="fa-solid fa-expand me-2"></i>Base Res</span><span class="fw-bold text-end">128 x 128 px</span></li>
-                            <li class="d-flex justify-content-between"><span class="text-muted"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Augmentation</span><span class="fw-bold text-end">Rot, Flip, Zoom</span></li>
-                        </ul>
+                        <div class="col-sm-7 p-4">
+                            <ul class="list-unstyled mb-0 d-flex flex-column gap-4 fs-6">
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted"><i class="fa-solid fa-layer-group me-3 text-primary border p-2 rounded bg-primary bg-opacity-10"></i>Data Split</span>
+                                    <span class="fw-bold text-main">80% Train / 20% Val</span>
+                                </li>
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted"><i class="fa-solid fa-expand me-3 text-info border p-2 rounded bg-info bg-opacity-10"></i>Base Resol.</span>
+                                    <span class="fw-bold text-main">128 x 128 px</span>
+                                </li>
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted"><i class="fa-solid fa-wand-magic-sparkles me-3 text-warning border p-2 rounded bg-warning bg-opacity-10"></i>Augmentation</span>
+                                    <span class="fw-bold text-main">Rotation, Flip, Zoom</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="p-1 rounded mt-1" style="background-color: var(--bg-color); border: 1px solid var(--border-color);">
-                <div class="d-flex justify-content-between align-items-center mb-0">
-                    <span class="fw-bold" style="font-size: 0.65rem;">Data Drift Metric (KS Test)</span>
-                    <span class="text-success fw-bold" style="font-size: 0.6rem;">Stable (0.012)</span>
+            <div class="p-4 rounded border" style="background-color: var(--bg-color); border-color: var(--border-color) !important;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-main fs-6"><i class="fa-solid fa-scale-unbalanced text-primary me-2"></i> Data Drift Metric (KS Test)</span>
+                    <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-3 py-1 fw-bold">Stable (0.012)</span>
                 </div>
-                <div class="progress mt-1" style="height: 3px; background-color: var(--border-color);">
-                    <div class="progress-bar bg-success" style="width: 12%;"></div>
+                <div class="progress mt-3" style="height: 6px; background-color: var(--border-color);">
+                    <div class="progress-bar bg-success rounded-pill" style="width: 12%;"></div>
                 </div>
             </div>
         </div>
 
-        <div class="col-xl-6">
-            <div class="glass-card h-100">
-                <div class="card-header-custom border-bottom py-1 px-2" style="border-color: var(--border-color) !important; font-size: 0.75rem;">
-                    <span><i class="fa-solid fa-sitemap"></i> Model Architecture Explorer</span>
+        <div class="col-xl-6 mt-4 mt-xl-0 border-0">
+            <div class="glass-card h-100 mb-0">
+                <div class="card-header-custom border-bottom py-3 px-4" style="border-color: var(--border-color) !important;">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-sitemap me-2"></i> Model Architecture Explorer</h6>
                 </div>
-                <div class="card-body p-1 px-2">
-                    <div class="row g-1">
-                        <div class="col-sm-6 text-muted" style="font-size: 0.65rem;">
-                            <div class="d-flex justify-content-between mb-0"><span class="fw-bold">Architecture</span> <span class="text-main">MobileNetV2</span></div>
-                            <div class="d-flex justify-content-between mb-0"><span class="fw-bold">Input Shape</span> <span class="text-main">(128, 128, 3)</span></div>
-                            <div class="d-flex justify-content-between mb-0"><span class="fw-bold">Top Layer</span> <span class="text-main">GlobalAvgPool2D</span></div>
-                            <div class="d-flex justify-content-between"><span class="fw-bold">Activation</span> <span class="text-main">Sigmoid</span></div>
+                <div class="card-body p-4">
+                    <div class="row g-4 h-100">
+                        <div class="col-sm-6 d-flex flex-column gap-3 text-muted">
+                            <div class="p-3 rounded border h-100 d-flex flex-column justify-content-center" style="background: var(--bg-color); border-color: var(--border-color)!important;">
+                                <div class="text-muted text-uppercase fw-bold small mb-1">Architecture Base</div>
+                                <div class="fw-bold fs-5 text-main">MobileNetV2</div>
+                            </div>
+                            <div class="p-3 rounded border h-100 d-flex flex-column justify-content-center" style="background: var(--bg-color); border-color: var(--border-color)!important;">
+                                <div class="text-muted text-uppercase fw-bold small mb-1">Input Shape</div>
+                                <div class="fw-bold fs-5 text-main">(128, 128, 3)</div>
+                            </div>
+                            <div class="p-3 rounded border h-100 d-flex flex-column justify-content-center" style="background: var(--bg-color); border-color: var(--border-color)!important;">
+                                <div class="text-muted text-uppercase fw-bold small mb-1">Top Classification Layer</div>
+                                <div class="fw-bold fs-6 text-main">GlobalAvgPool2D &rarr; Dense</div>
+                            </div>
+                            <div class="p-3 rounded border h-100 d-flex flex-column justify-content-center" style="background: var(--bg-color); border-color: var(--border-color)!important;">
+                                <div class="text-muted text-uppercase fw-bold small mb-1">Final Activation</div>
+                                <div class="fw-bold fs-5 text-success">Sigmoid</div>
+                            </div>
                         </div>
-                        <div class="col-sm-6 text-muted border-start" style="font-size: 0.65rem; border-color: var(--border-color) !important;">
-                            <div class="d-flex justify-content-between mb-0"><span class="fw-bold ps-1">Total Params</span> <span class="text-main">2.25M</span></div>
-                            <div class="d-flex justify-content-between mb-0"><span class="fw-bold ps-1">Trainable</span> <span class="text-main">1.21M</span></div>
-                            <div class="d-flex justify-content-between mb-0"><span class="fw-bold ps-1">Optimizer</span> <span class="text-main">Adam</span></div>
-                            <div class="d-flex justify-content-between"><span class="fw-bold ps-1">Learning Rate</span> <span class="text-main">0.001</span></div>
+                        <div class="col-sm-6 d-flex flex-column gap-3 text-muted">
+                            <div class="p-3 rounded border h-100 d-flex flex-column justify-content-center" style="background: var(--bg-color); border-color: var(--border-color)!important;">
+                                <div class="text-muted text-uppercase fw-bold small mb-1">Total Parameters</div>
+                                <div class="fw-bold fs-5 text-primary">2.25M</div>
+                            </div>
+                            <div class="p-3 rounded border h-100 d-flex flex-column justify-content-center" style="background: var(--bg-color); border-color: var(--border-color)!important;">
+                                <div class="text-muted text-uppercase fw-bold small mb-1">Trainable Params</div>
+                                <div class="fw-bold fs-5 text-primary">1.21M</div>
+                            </div>
+                            <div class="p-3 rounded border h-100 d-flex flex-column justify-content-center" style="background: var(--bg-color); border-color: var(--border-color)!important;">
+                                <div class="text-muted text-uppercase fw-bold small mb-1">Optimizer Algorithm</div>
+                                <div class="fw-bold fs-5 text-primary">Adam</div>
+                            </div>
+                            <div class="p-3 rounded border h-100 d-flex flex-column justify-content-center" style="background: var(--bg-color); border-color: var(--border-color)!important;">
+                                <div class="text-muted text-uppercase fw-bold small mb-1">Learning Rate</div>
+                                <div class="fw-bold fs-5 text-primary">0.001</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -475,350 +809,260 @@
   </div>
 
   <div class="tab-pane fade" id="tab-settings" role="tabpanel">
-<div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3" style="border-color: var(--border-color) !important;">
-    <div>
-        <h4 class="mb-0 fw-bold"><i class="fa-solid fa-gear text-primary me-2"></i> System Configuration</h4>
-        <div class="settings-subtitle fw-bold">System Control Center</div>
+    <!-- UPPER SECTION -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom" style="border-color: var(--border-color) !important;">
+        <div>
+            <h4 class="mb-0 fw-bold"><i class="fa-solid fa-gear text-primary me-2"></i> System Configuration</h4>
+            <div class="text-muted mt-1">Manage API settings, access control, and monitor live system health.</div>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 fs-6"><i class="fa-solid fa-shield-halved me-1"></i> Secured TLS 1.3</span>
+        </div>
     </div>
-    <div class="d-flex align-items-center">
-        <span class="badge bg-success me-2"><i class="fa-solid fa-shield-halved"></i> SSL Secured</span>
-    </div>
-</div>
 
-<div class="row g-4">
-    <!-- LEFT COLUMN - CONFIG MODULES -->
-    <div class="col-xl-8 col-lg-7">
-        
+    <!-- UPPER ROW (3 columns) -->
+    <div class="row g-4 mb-4">
         <!-- A. API & MODEL CONFIG -->
-        <div class="custom-card">
-            <div class="card-header-custom">
-                <span><i class="fa-solid fa-microchip"></i> API & Model Configuration</span>
-            </div>
-            <div class="card-body p-4 form-module">
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small text-muted text-uppercase">Active Model Version</label>
-                        <select class="form-select bg-light border-0 shadow-none" style="background-color: var(--bg-color) !important; color: var(--text-main);">
-                            <option value="v1.0.3" selected>MobileNetV2 (v1.0.3) - Production</option>
-                            <option value="v1.0.2">MobileNetV2 (v1.0.2) - Legacy</option>
-                            <option value="v2.0-beta">ResNet50 (v2.0.0-beta) - Testing</option>
-                        </select>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small text-muted text-uppercase">
-                            Confidence Threshold: <span id="confValDisplay" class="text-primary fs-6 ms-2">80%</span>
-                        </label>
-                        <input type="range" class="form-range" id="confSlider" min="50" max="99" value="80">
-                        <small class="text-muted d-block mt-1">Minimum score to issue 'High Risk'</small>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center">
-                            <label class="form-check-label fw-bold mb-0" for="toggleHeatmap">Enable Heatmap Visualization</label>
-                            <input class="form-check-input ms-auto" type="checkbox" role="switch" id="toggleHeatmap" checked>
-                        </div>
-                        
-                        <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center mt-3">
-                            <label class="form-check-label fw-bold mb-0" for="toggleBatch">Enable Batch Processing</label>
-                            <input class="form-check-input ms-auto" type="checkbox" role="switch" id="toggleBatch">
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small text-muted text-uppercase">Maximum Batch Capacity</label>
-                        <input type="number" class="form-control" value="50" min="1" max="100" style="background-color: var(--bg-color); color: var(--text-main); border-color: var(--border-color);">
-                    </div>
-
-                    <div class="col-12 mt-4 pt-3 border-top" style="border-color: var(--border-color) !important;">
-                        <label class="form-label fw-bold small text-muted text-uppercase">Enterprise API Key</label>
-                        <div class="d-flex gap-2">
-                            <div class="api-key-input flex-grow-1" id="apiKeyDisplay">pk_live_************************3f9a</div>
-                            <button class="btn btn-outline-secondary btn-sm px-3" onclick="copyAPIKey()"><i class="fa-regular fa-copy"></i> Copy</button>
-                            <button class="btn btn-outline-danger btn-sm px-3" data-bs-toggle="modal" data-bs-target="#regenModal"><i class="fa-solid fa-arrows-rotate"></i> Regenerate</button>
-                        </div>
-                    </div>
-                    
-                    <div class="col-12 mt-4 text-end">
-                        <button class="btn-medical btn-save" disabled><i class="fa-solid fa-save"></i> Save Changes</button>
-                    </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="custom-card h-100">
+                <div class="card-header-custom py-3 px-4 border-bottom" style="border-color: var(--border-color)!important;">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-microchip me-2"></i> API & Model Config</h6>
                 </div>
-            </div>
-        </div>
+                <div class="card-body p-4 form-module text-muted">
+                    <label class="fw-bold text-uppercase mb-2 small text-main">Active Model Version</label>
+                    <select class="form-select mb-4" style="background-color: var(--bg-color) !important; color: var(--text-main); border-color: var(--border-color);">
+                        <option value="v1.0.3" selected>MobileNetV2 (v1.0.3)</option>
+                        <option value="v2.0-beta">ResNet50 (v2.0-beta)</option>
+                    </select>
 
-        <!-- B. NOTIFICATION SETTINGS -->
-        <div class="custom-card mt-4">
-            <div class="card-header-custom">
-                <span><i class="fa-solid fa-bell"></i> Notification Settings</span>
-            </div>
-            <div class="card-body p-4 form-module">
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center mb-3">
-                            <label class="form-check-label fw-bold mb-0" for="toggleEmail">Email Alerts</label>
-                            <input class="form-check-input ms-auto" type="checkbox" role="switch" id="toggleEmail" checked>
-                        </div>
-                        <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center mb-3">
-                            <label class="form-check-label fw-bold mb-0" for="toggleSMS">SMS Alerts</label>
-                            <input class="form-check-input ms-auto" type="checkbox" role="switch" id="toggleSMS">
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center mb-3">
-                            <label class="form-check-label fw-bold mb-0" for="toggleHighRisk">High-Risk Alerts Only</label>
-                            <input class="form-check-input ms-auto" type="checkbox" role="switch" id="toggleHighRisk" checked>
-                        </div>
-                        <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center mb-3">
-                            <label class="form-check-label fw-bold mb-0" for="toggleWeekly">Weekly Performance Report</label>
-                            <input class="form-check-input ms-auto" type="checkbox" role="switch" id="toggleWeekly" checked>
-                        </div>
+                    <label class="fw-bold text-uppercase mb-2 mt-2 d-flex justify-content-between small text-main">
+                        Conf. Threshold <span class="text-primary fw-bold fs-6" id="confValDisplay">80%</span>
+                    </label>
+                    <input type="range" class="form-range mb-4" id="confSlider" min="50" max="99" value="80">
+
+                    <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center mt-3 mb-4">
+                        <label class="fw-bold mb-0 text-main">Enable Grad-CAM Heatmap</label>
+                        <input class="form-check-input ms-auto fs-5" type="checkbox" role="switch" checked>
                     </div>
 
-                    <div class="col-md-8 mt-2">
-                        <label class="form-label fw-bold small text-muted text-uppercase">Admin Notification Email</label>
-                        <input type="email" class="form-control" value="admin@hospital-ai.org" style="background-color: var(--bg-color); color: var(--text-main); border-color: var(--border-color);">
+                    <label class="fw-bold text-uppercase mb-2 small text-main">Enterprise API Key</label>
+                    <div class="d-flex gap-2 mt-1">
+                        <div class="api-key-input flex-grow-1 px-3 py-2 mb-0 d-flex align-items-center overflow-hidden font-monospace rounded" id="apiKeyDisplay" style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main);">pk_live_***3f9a</div>
+                        <button class="btn btn-outline-secondary px-3" onclick="copyAPIKey()"><i class="fa-regular fa-copy"></i></button>
                     </div>
-                    
-                    <div class="col-12 mt-4 text-end border-top pt-4" style="border-color: var(--border-color) !important;">
-                        <button class="btn-medical btn-save" disabled><i class="fa-solid fa-save"></i> Save Preferences</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- C. ACCESS CONTROL & ROLES -->
-        <div class="custom-card mt-4">
-            <div class="card-header-custom">
-                <span><i class="fa-solid fa-users"></i> Access Control & Roles</span>
-                <button class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-user-plus"></i> Add New User</button>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-clinical mb-0">
-                        <thead class="bg-light" style="background-color: var(--bg-color) !important;">
-                            <tr>
-                                <th class="ps-4">Name</th>
-                                <th>Role</th>
-                                <th>Permissions</th>
-                                <th>Status</th>
-                                <th class="text-end pe-4">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="ps-4 fw-bold">Dr. Sarah Jenkins</td>
-                                <td>Admin</td>
-                                <td class="small text-muted">All Access</td>
-                                <td><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 pb-1">Active</span></td>
-                                <td class="text-end pe-4"><button class="btn btn-sm btn-action w-auto mb-0"><i class="fa-solid fa-pencil"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4 fw-bold">Dr. Michael Chen</td>
-                                <td>Doctor</td>
-                                <td class="small text-muted">Diagnose, Upload</td>
-                                <td><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 pb-1">Active</span></td>
-                                <td class="text-end pe-4"><button class="btn btn-sm btn-action w-auto mb-0"><i class="fa-solid fa-pencil"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4 fw-bold">T. Barnes</td>
-                                <td>Lab Technician</td>
-                                <td class="small text-muted">Upload Only</td>
-                                <td><span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 pb-1">Inactive</span></td>
-                                <td class="text-end pe-4"><button class="btn btn-sm btn-action w-auto mb-0"><i class="fa-solid fa-pencil"></i></button></td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
 
         <!-- D. SYSTEM PARAMETERS -->
-        <div class="custom-card mt-4 mb-5">
-            <div class="card-header-custom">
-                <span><i class="fa-solid fa-sliders"></i> System Parameters</span>
+        <div class="col-xl-4 col-md-6">
+            <div class="custom-card h-100">
+                <div class="card-header-custom py-3 px-4 border-bottom" style="border-color: var(--border-color)!important;">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-sliders me-2"></i> System Parameters</h6>
+                </div>
+                <div class="card-body p-4 form-module text-muted">
+                    <label class="fw-bold text-uppercase mb-2 small text-main">Default Risk Mode</label>
+                    <select class="form-select mb-4" style="background-color: var(--bg-color); color: var(--text-main); border-color: var(--border-color);">
+                        <option value="strict" selected>Strict (Min. Fls Neg)</option>
+                        <option value="balanced">Balanced</option>
+                    </select>
+
+                    <label class="fw-bold text-uppercase mb-2 mt-2 small text-main">Data Retention Policy</label>
+                    <select class="form-select mb-4" style="background-color: var(--bg-color); color: var(--text-main); border-color: var(--border-color);">
+                        <option value="90" selected>90 Days (HIPAA Compliant)</option>
+                        <option value="30">30 Days</option>
+                    </select>
+
+                    <label class="fw-bold text-uppercase mb-2 mt-2 d-flex justify-content-between small text-main">
+                        Severity Alert Threshold <span class="text-danger fw-bold fs-6" id="severityValDisplay">7 / 10</span>
+                    </label>
+                    <input type="range" class="form-range mb-4" id="severitySlider" min="1" max="10" value="7">
+
+                    <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center mt-3 mb-2">
+                        <label class="fw-bold mb-0 text-main">Auto-Generate PDF Reports</label>
+                        <input class="form-check-input ms-auto fs-5" type="checkbox" role="switch">
+                    </div>
+                </div>
             </div>
-            <div class="card-body p-4 form-module">
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small text-muted text-uppercase">Default Risk Mode</label>
-                        <select class="form-select" style="background-color: var(--bg-color); color: var(--text-main); border-color: var(--border-color);">
-                            <option value="strict" selected>Strict (Minimize False Negatives)</option>
-                            <option value="balanced">Balanced</option>
-                            <option value="relaxed">Relaxed (Minimize False Positives)</option>
-                        </select>
+        </div>
+
+        <!-- B. NOTIFICATIONS & PREFS -->
+        <div class="col-xl-4 col-md-12">
+             <div class="custom-card h-100 d-flex flex-column">
+                <div class="card-header-custom py-3 px-4 border-bottom" style="border-color: var(--border-color)!important;">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-bell me-2"></i> Notifications</h6>
+                </div>
+                <div class="card-body p-4 form-module d-flex flex-column text-muted flex-grow-1">
+                    <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center mb-4">
+                        <label class="fw-bold mb-0 text-main">Enable Email Alerts</label>
+                        <input class="form-check-input ms-auto fs-5" type="checkbox" role="switch" checked>
+                    </div>
+                    <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center mb-4">
+                        <label class="fw-bold mb-0 text-main">High-Risk Cases Only</label>
+                        <input class="form-check-input ms-auto fs-5" type="checkbox" role="switch" checked>
                     </div>
                     
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small text-muted text-uppercase">Data Retention Period</label>
-                        <select class="form-select" style="background-color: var(--bg-color); color: var(--text-main); border-color: var(--border-color);">
-                            <option value="30">30 Days</option>
-                            <option value="60">60 Days</option>
-                            <option value="90" selected>90 Days (HIPAA Compliant)</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small text-muted text-uppercase">
-                            Severity Index Threshold: <span id="severityValDisplay" class="text-danger fs-6 ms-2">7 / 10</span>
-                        </label>
-                        <input type="range" class="form-range" id="severitySlider" min="1" max="10" value="7">
-                    </div>
+                    <label class="fw-bold text-uppercase mb-2 mt-2 small text-main">System Admin Email</label>
+                    <input type="email" class="form-control mb-4 px-3 py-2 border border-secondary" value="admin@hospital-ai.org" style="background-color: var(--bg-color); color: var(--text-main);">
                     
-                    <div class="col-md-6">
-                        <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center mb-3 mt-2">
-                            <label class="form-check-label fw-bold mb-0" for="toggleAutoPDF">Auto Generate PDF Reports</label>
-                            <input class="form-check-input ms-auto" type="checkbox" role="switch" id="toggleAutoPDF">
+                    <div class="mt-auto pt-4 border-top text-end" style="border-color: var(--border-color) !important;">
+                        <button class="btn-medical py-2 px-4 fw-bold w-100 border-0 fs-6 shadow-sm" style="background: var(--primary); color: white;"><i class="fa-solid fa-save me-2"></i> Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOWER ROW (Access Control + Health) -->
+    <div class="row g-4 pb-4">
+        <!-- C. ACCESS CONTROL -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="custom-card h-100">
+                <div class="card-header-custom py-3 px-4 border-bottom d-flex justify-content-between align-items-center" style="border-color: var(--border-color)!important;">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-users-gear me-2"></i> Access Control Data</h6>
+                    <button class="btn btn-sm btn-outline-primary py-1 px-3 fw-bold"><i class="fa-solid fa-user-plus me-1"></i> Add User</button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-clinical mb-0 align-middle">
+                            <thead class="bg-light" style="background-color: var(--bg-color) !important;">
+                                <tr>
+                                    <th class="ps-4 py-3 text-muted text-uppercase small fw-bold">User Name</th>
+                                    <th class="py-3 text-muted text-uppercase small fw-bold">Role</th>
+                                    <th class="py-3 text-muted text-uppercase small fw-bold">Status</th>
+                                    <th class="text-end pe-4 py-3 text-muted text-uppercase small fw-bold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-4 fw-bold py-3 text-main">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center me-3 fw-bold shadow-sm" style="width: 36px; height: 36px; font-size: 0.9rem;">SJ</div>
+                                            Dr. Sarah Jenkins
+                                        </div>
+                                    </td>
+                                    <td class="py-3 text-muted">Administrator</td>
+                                    <td class="py-3"><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">Active</span></td>
+                                    <td class="text-end pe-4 py-3">
+                                        <button class="btn btn-sm btn-outline-secondary me-2"><i class="fa-solid fa-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4 fw-bold py-3 text-main border-bottom-0">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-info bg-opacity-10 text-info d-flex align-items-center justify-content-center me-3 fw-bold shadow-sm" style="width: 36px; height: 36px; font-size: 0.9rem;">MC</div>
+                                            Dr. Michael Chen
+                                        </div>
+                                    </td>
+                                    <td class="py-3 text-muted border-bottom-0">Clinical Doctor</td>
+                                    <td class="py-3 border-bottom-0"><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">Active</span></td>
+                                    <td class="text-end pe-4 py-3 border-bottom-0">
+                                        <button class="btn btn-sm btn-outline-secondary me-2"><i class="fa-solid fa-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LIVE SYSTEM HEALTH -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="custom-card h-100 d-flex flex-column">
+                <div class="card-header-custom py-3 px-4 border-bottom d-flex justify-content-between align-items-center" style="border-color: var(--border-color)!important;">
+                    <h6 class="mb-0 fw-bold"><i class="fa-solid fa-heart-pulse text-danger me-2"></i> Live Pulse Rate</h6>
+                    <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-3 py-1 fw-bold fs-6"><span class="status-indicator me-1 d-inline-block shadow-none"></span>Live</span>
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    
+                    <div class="d-flex justify-content-between mb-4 pb-4 border-bottom" style="border-color: var(--border-color)!important;">
+                        <div>
+                            <div class="text-muted fw-bold text-uppercase small">Uptime</div>
+                            <div class="fw-bold text-main fs-2 mt-1" id="uptimeCounter">99.98%</div>
                         </div>
-                        <div class="form-check form-switch ps-0 d-flex justify-content-between align-items-center">
-                            <label class="form-check-label fw-bold mb-0" for="toggleDarkDefault">Force Dark Mode Default</label>
-                            <input class="form-check-input ms-auto" type="checkbox" role="switch" id="toggleDarkDefault">
+                        <div class="text-end">
+                            <div class="text-muted fw-bold text-uppercase small">Avg Latency</div>
+                            <div class="fw-bold text-success fs-2 mt-1" id="latencyVal">42ms</div>
                         </div>
                     </div>
 
-                    <div class="col-12 mt-4 text-end border-top pt-4" style="border-color: var(--border-color) !important;">
-                        <button class="btn-medical btn-save" disabled><i class="fa-solid fa-save"></i> Save Configuration</button>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold text-muted text-uppercase small">GPU Memory (CUDA)</span>
+                            <span class="fw-bold text-primary" id="gpuVal">28%</span>
+                        </div>
+                        <div class="health-progress-bg" style="height: 8px;">
+                            <div class="health-progress-fill fill-primary" id="gpuBar" style="width: 28%; border-radius: 4px; transition: width 0.5s;"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold text-muted text-uppercase small">CPU & RAM Util</span>
+                            <span class="fw-bold text-info" id="cpuVal">14% / 4.2G</span>
+                        </div>
+                        <div class="health-progress-bg" style="height: 8px;">
+                            <div class="health-progress-fill fill-info" id="cpuBar" style="width: 14%; border-radius: 4px; transition: width 0.5s;"></div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded mt-auto text-center" style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2);">
+                        <div class="text-primary fw-bold text-uppercase small mb-2"><i class="fa-solid fa-bullseye me-2"></i>System Drift Tolerance</div>
+                        <div class="fw-bold text-main fs-4 mt-1">Optimal (0.01)</div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- RIGHT COLUMN - LIVE SYSTEM HEALTH DASHBOARD -->
-    <div class="col-xl-4 col-lg-5">
-        <div class="custom-card sticky-panel">
-            <div class="card-header-custom">
-                <span><i class="fa-solid fa-heart-pulse text-danger"></i> Live System Health</span>
-                <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-3"><span class="status-indicator me-1 d-inline-block"></span>Online</span>
-            </div>
-            
-            <div class="card-body p-4">
-                
-                <!-- Uptime & Update -->
-                <div class="d-flex justify-content-between mb-4 pb-3 border-bottom" style="border-color: var(--border-color) !important;">
-                    <div>
-                        <div class="text-muted small text-uppercase fw-bold">System Uptime</div>
-                        <div class="fs-4 fw-bold text-main" id="uptimeCounter">99.98%</div>
-                    </div>
-                    <div class="text-end">
-                        <div class="text-muted small text-uppercase fw-bold">Last Model Update</div>
-                        <div class="fs-6 fw-bold text-main mt-1">2026-03-01</div>
-                    </div>
-                </div>
+    <!-- Footer Status Strip -->
+    <div class="footer-strip mt-2 py-3 px-4 d-flex justify-content-between align-items-center" style="border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+        <div class="d-flex gap-4">
+            <span class="d-flex align-items-center fw-bold text-muted"><div class="status-indicator me-2 bg-success d-inline-block"></div> System Online</span>
+            <span class="fw-bold text-muted"><i class="fa-solid fa-database text-info me-2"></i> PostgreSQL Connected</span>
+        </div>
+    </div>
 
-                <!-- API Latency -->
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-bold small text-muted text-uppercase">API Request Latency</span>
-                        <span class="fw-bold text-success" id="latencyVal">42ms</span>
-                    </div>
-                    <!-- Mock Line Chart area -->
-                    <div class="rounded p-2 mt-2" style="background-color: var(--bg-color); height: 60px; position: relative; border: 1px solid var(--border-color);">
-                        <svg viewBox="0 0 100 30" width="100%" height="100%" preserveAspectRatio="none">
-                            <polyline fill="none" stroke="var(--success)" stroke-width="2" points="0,20 10,22 20,15 30,25 40,18 50,20 60,10 70,15 80,12 90,16 100,5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path fill="rgba(16, 185, 129, 0.1)" d="M0,30 L0,20 L10,22 L20,15 L30,25 L40,18 L50,20 L60,10 L70,15 L80,12 L90,16 L100,5 L100,30 Z"/>
-                        </svg>
-                    </div>
+    <!-- Modal: Regenerate API Key -->
+    <div class="modal fade" id="regenModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content" style="background-color: var(--surface); color: var(--text-main); border: 1px solid var(--border-color);">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title fw-bold text-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i> Warning</h5>
+                    <button type="button" class="btn-close shadow-none filter-invert" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
-                <!-- GPU Usage -->
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-bold small text-muted text-uppercase">GPU Utilization (CUDA)</span>
-                        <span class="fw-bold text-primary" id="gpuVal">28%</span>
-                    </div>
-                    <div class="health-progress-bg">
-                        <div class="health-progress-fill fill-primary" id="gpuBar" style="width: 28%;"></div>
-                    </div>
+                <div class="modal-body py-2 text-muted text-center pt-0">
+                    Regenerating will invalidate the current API key immediately!
                 </div>
-
-                <!-- CPU Usage -->
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-bold small text-muted text-uppercase">CPU Usage</span>
-                        <span class="fw-bold text-info" id="cpuVal">14%</span>
-                    </div>
-                    <div class="health-progress-bg">
-                        <div class="health-progress-fill fill-info" id="cpuBar" style="width: 14%;"></div>
-                    </div>
+                <div class="modal-footer border-top-0 d-flex justify-content-center pb-3">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger text-white px-4 fw-bold" onclick="performRegen()" data-bs-dismiss="modal">Regenerate</button>
                 </div>
-                
-                <!-- RAM Usage -->
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-bold small text-muted text-uppercase">RAM Usage</span>
-                        <span class="fw-bold text-warning" id="ramVal">4.2 GB</span>
-                    </div>
-                    <div class="health-progress-bg">
-                        <div class="health-progress-fill fill-warning" id="ramBar" style="width: 45%;"></div>
-                    </div>
-                    <div class="text-end small text-muted mt-1">4.2 GB / 16.0 GB Total</div>
-                </div>
-
-                <!-- Accuracy Metric -->
-                <div class="p-3 rounded mt-4 text-center" style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2);">
-                    <div class="text-primary fw-bold text-uppercase small"><i class="fa-solid fa-bullseye me-2"></i>Live Prod Accuracy</div>
-                    <div class="fs-3 fw-bold mt-1 text-main">89.4%</div>
-                </div>
-
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal: Regenerate API Key -->
-<div class="modal fade" id="regenModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background-color: var(--surface); color: var(--text-main); border: 1px solid var(--border-color);">
-            <div class="modal-header border-bottom-0">
-                <h5 class="modal-title fw-bold text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Security Warning</h5>
-                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--text-main);"></button>
+    <!-- Toast Notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-4">
+        <div id="saveToast" class="toast align-items-center text-white bg-success border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold fs-6">
+                    <i class="fa-solid fa-circle-check me-2"></i> Settings saved successfully.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                Regenerating the Enterprise API Key will immediately invalidate the current key. Any external integrations or secondary devices currently using the old key will instantly lose connection to the AI model. 
-                <br><br>
-                <strong>Are you absolutely sure you want to proceed?</strong>
-            </div>
-            <div class="modal-footer border-top-0 pt-0">
-                <button type="button" class="btn btn-action w-auto m-0" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger text-white ms-2" onclick="performRegen()" data-bs-dismiss="modal">Yes, Regenerate Key</button>
+        </div>
+        <div id="copyToast" class="toast align-items-center bg-dark text-white border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold fs-6">
+                    <i class="fa-regular fa-clipboard me-2"></i> API Key copied!
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Toast Notifications -->
-<div class="toast-container">
-    <div id="saveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body fw-bold">
-                <i class="fa-solid fa-circle-check me-2"></i> Settings successfully saved and applied.
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
-    
-    <div id="copyToast" class="toast align-items-center bg-dark text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body fw-bold">
-                <i class="fa-regular fa-clipboard me-2"></i> API Key copied to clipboard.
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Footer Status Strip -->
-<div class="footer-strip">
-    <div class="footer-strip-items">
-        <span class="d-flex align-items-center"><div class="status-indicator me-2 bg-success"></div> API Online</span>
-        <span><i class="fa-solid fa-bolt text-warning"></i> Latency: 42ms</span>
-        <span><i class="fa-solid fa-database text-info"></i> Postgres DB Linked</span>
-    </div>
-    <div class="d-none d-md-block">
-        <i class="fa-solid fa-lock text-success me-1"></i> HTTPS / TLS 1.3 Active
-    </div>
-</div>
 
   </div>
 
@@ -1148,25 +1392,89 @@
         });
     }
 
-    // 4. Simulated Live Updates (Every 5 Seconds)
-    setInterval(() => {
-        // Randomize inference time between 95 and 125ms
-        const infTime = Math.floor(Math.random() * (125 - 95 + 1)) + 95;
-        const liveInf = document.getElementById('liveInferenceVal');
-        if (liveInf) liveInf.innerText = infTime + ' ms';
+    // 4. Global Real-time Data Fetches (Every 3 seconds)
+    function animateValue(obj, start, end, duration) {
+        if (!obj) return;
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = (progress * (end - start) + start).toFixed(obj.dataset.decimals || 0);
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            } else {
+                obj.innerHTML = end.toFixed(obj.dataset.decimals || 0);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
 
-        // Randomize API Latency between 35 and 55ms
-        const latTime = Math.floor(Math.random() * (55 - 35 + 1)) + 35;
-        const liveLat = document.getElementById('liveLatencyVal');
-        if (liveLat) liveLat.innerText = latTime + ' ms';
-
-        // Add glow effect to show update
-        if (liveInf) {
-            liveInf.style.transition = 'text-shadow 0.2s';
-            liveInf.style.textShadow = '0 0 10px rgba(59, 130, 246, 0.8)';
-            setTimeout(() => { liveInf.style.textShadow = 'none'; }, 500);
+    function updateRT(id, value, decimals) {
+        let el = document.getElementById(id);
+        if(!el) return;
+        el.dataset.decimals = decimals || 0;
+        let oldText = el.innerText.replace(/,/g, '');
+        let oldVal = parseFloat(oldText);
+        if(isNaN(oldVal)) oldVal = value;
+        
+        animateValue(el, oldVal, value, 800);
+        
+        // Flash effect
+        if(value > oldVal) {
+            el.style.textShadow = '0 0 10px rgba(16, 185, 129, 0.8)';
+            el.style.color = '#10b981';
+        } else if (value < oldVal) {
+            el.style.textShadow = '0 0 10px rgba(239, 68, 68, 0.8)';
+            el.style.color = '#ef4444';
         }
-    }, 5000);
+        setTimeout(() => {
+            el.style.textShadow = '';
+            el.style.color = '';
+        }, 1000);
+    }
+
+    setInterval(() => {
+        fetch('/api/realtime')
+        .then(res => res.json())
+        .then(data => {
+            updateRT('rt-patients', data.patients_analyzed, 0);
+            updateRT('rt-highrisk', data.high_risk_30d, 0);
+            updateRT('rt-confidence', data.avg_confidence, 1);
+            
+            updateRT('rt-accuracy', data.accuracy, 1);
+            updateRT('rt-precision', data.precision, 1);
+            updateRT('rt-recall', data.recall, 1);
+            updateRT('rt-f1', data.f1_score, 1);
+            
+            let liveInf = document.getElementById('liveInferenceVal');
+            if(liveInf) {
+                liveInf.innerText = data.live_inference + ' ms';
+                liveInf.style.transition = 'text-shadow 0.2s';
+                liveInf.style.textShadow = '0 0 10px rgba(59, 130, 246, 0.8)';
+                setTimeout(() => { liveInf.style.textShadow = 'none'; }, 500);
+            }
+            let liveLat = document.getElementById('liveLatencyVal');
+            if(liveLat) liveLat.innerText = data.live_latency + ' ms';
+            
+            let latVal = document.getElementById('latencyVal');
+            if(latVal) latVal.innerText = data.api_latency + 'ms';
+            
+            let uptimeVal = document.getElementById('uptimeCounter');
+            if(uptimeVal) uptimeVal.innerText = '99.99%';
+            
+            let gpuVal = document.getElementById('gpuVal');
+            if(gpuVal) gpuVal.innerText = data.gpu_temp + '%';
+            let gpuBar = document.getElementById('gpuBar');
+            if(gpuBar) gpuBar.style.width = data.gpu_temp + '%';
+            
+            let cpuVal = document.getElementById('cpuVal');
+            if(cpuVal) cpuVal.innerText = data.cpu_load + '% / ' + data.memory_usage + 'G';
+            let cpuBar = document.getElementById('cpuBar');
+            if(cpuBar) cpuBar.style.width = data.cpu_load + '%';
+            
+        })
+        .catch(err => console.error("Realtime fetch failed", err));
+    }, 3000);
     });
 </script>
 <script>
@@ -1212,22 +1520,7 @@
             severityValDisplay.textContent = e.target.value + ' / 10';
         });
 
-        // Live Health Panel Simulation
-        setInterval(() => {
-            // Random Latency
-            const latency = Math.floor(Math.random() * (60 - 35 + 1) + 35);
-            document.getElementById('latencyVal').textContent = latency + 'ms';
-            
-            // Random GPU Fluctuation (20-40%)
-            const gpu = Math.floor(Math.random() * 21 + 20);
-            document.getElementById('gpuVal').textContent = gpu + '%';
-            document.getElementById('gpuBar').style.width = gpu + '%';
-            
-            // CPU Fluctuation (10-25%)
-            const cpu = Math.floor(Math.random() * 16 + 10);
-            document.getElementById('cpuVal').textContent = cpu + '%';
-            document.getElementById('cpuBar').style.width = cpu + '%';
-        }, 2000);
+        // Live Health Panel Simulation (Handled by global fetch loop)
         
         // Hide sidebar default footer if not needed, but keep it for layout consistency.
     });
