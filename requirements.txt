@@ -6,3 +6,5 @@ scipy
 seaborn
 tensorflow
 Flask
+gunicorn
+python-dotenv

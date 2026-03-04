@@ -45,6 +45,13 @@ def process_image(img_file):
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
 
+from flask import send_from_directory
+import os
+
+@app.route('/cell_images/<path:filename>')
+def serve_cell_images(filename):
+    return send_from_directory('cell_images', filename)
+
 @app.route('/', methods=['GET'])
 def index():
     recent_patients = []
@@ -66,10 +73,14 @@ def index():
             diagnosis = rng.choice(["Parasitized (P. falciparum)", "Parasitized (P. vivax)", "Parasitized (P. ovale)"])
             risk = "High Risk"
             confidence = round(rng.uniform(92.0, 99.8), 1)
+            notes = f"Patient presented with high fever ({round(rng.uniform(38.5, 40.5), 1)}°C), chills, and fatigue. Travel history to endemic region noted. Immediate blood smear requested. AI flagged as High Risk ({diagnosis.split('(')[-1].strip(')')})."
+            image_path = f"/cell_images/Parasitized/{filename}"
         else:
             diagnosis = "Uninfected"
             risk = "Low Risk"
             confidence = round(rng.uniform(94.0, 99.9), 1)
+            notes = "Patient presented with mild symptoms. Routine blood screening conducted. Artificial Intelligence analysis indicates negative for malaria parasites."
+            image_path = f"/cell_images/Uninfected/{filename}"
             
         days_ago = rng.randint(0, 5)
         date_str = (datetime.now() - timedelta(days=days_ago)).strftime('%Y-%m-%d')
@@ -83,8 +94,11 @@ def index():
             'diagnosis': diagnosis,
             'confidence': confidence,
             'risk': risk,
-            'filename': filename
+            'filename': filename,
+            'notes': notes,
+            'image_path': image_path
         }
+
 
     parasitized_dir = os.path.join('cell_images', 'Parasitized')
     uninfected_dir = os.path.join('cell_images', 'Uninfected')
@@ -191,4 +205,5 @@ def predict():
         return jsonify({'error': f"Error processing image: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)

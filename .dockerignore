@@ -1,0 +1,12 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+Dockerfile
+.dockerignore
+cell_images/
+parasitized.zip
+uninfected.zip
+cell-images-for-detecting-malaria.zip

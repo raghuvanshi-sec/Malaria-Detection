@@ -367,7 +367,7 @@
                             </span>
                         </td>
                         <td class="py-3 px-4 text-end">
-                            <button class="btn btn-sm btn-outline-light me-1" data-bs-toggle="modal" data-bs-target="#patientDetailModal" onclick="populateModal('{{ patient.id }}', '{{ patient.name }}', '{{ patient.age }}', '{{ patient.gender }}', '{{ patient.diagnosis }}', '{{ patient.confidence }}', '{{ patient.risk }}', '{{ patient.filename }}')"><i class="fa-solid fa-eye"></i> View</button>
+                            <button class="btn btn-sm btn-outline-light me-1" data-bs-toggle="modal" data-bs-target="#patientDetailModal" onclick="populateModal('{{ patient.id }}', '{{ patient.name }}', '{{ patient.age }}', '{{ patient.gender }}', '{{ patient.diagnosis }}', '{{ patient.confidence }}', '{{ patient.risk }}', '{{ patient.filename }}', '{{ patient.date }}', '{{ patient.notes }}', '{{ patient.image_path }}')"><i class="fa-solid fa-eye"></i> View</button>
                             <button class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-file-pdf"></i></button>
                         </td>
                     </tr>
@@ -435,7 +435,7 @@
 
                         <div class="p-4 rounded border h-100" style="background-color: var(--bg-color); border-color: var(--border-color) !important;">
                             <h6 class="fw-bold text-muted text-uppercase small mb-3"><i class="fa-solid fa-pen-to-square me-2"></i> Clinical Notes</h6>
-                            <textarea class="form-control bg-dark border-secondary text-light custom-input mb-3" rows="5" placeholder="Add clinical notes..." style="resize: none;">Patient presented with high fever (39.5°C), chills, and fatigue. Travel history to endemic region noted. Immediate blood smear requested. AI flagged as High Risk (Falciparum).</textarea>
+                            <textarea id="modalClinicalNotes" class="form-control bg-dark border-secondary text-light custom-input mb-3" rows="5" placeholder="Add clinical notes..." style="resize: none;">Patient presented with high fever (39.5°C), chills, and fatigue. Travel history to endemic region noted. Immediate blood smear requested. AI flagged as High Risk (Falciparum).</textarea>
                             <button class="btn btn-outline-success w-100 fw-bold"><i class="fa-solid fa-floppy-disk me-2"></i>Save Notes</button>
                         </div>
                     </div>
@@ -457,26 +457,12 @@
                             <div class="col-md-12">
                                 <h6 class="fw-bold text-muted text-uppercase small mb-3"><i class="fa-solid fa-microscope me-2"></i> Captured Scans / Smears</h6>
                                 <div class="d-flex gap-3 overflow-auto pb-2 custom-scrollbar">
-                                    <div class="border rounded p-2 text-center" style="border-color: var(--border-color) !important; min-width: 140px; background-color: var(--bg-color);">
-                                        <div class="bg-dark rounded mb-2 d-flex align-items-center justify-content-center" style="height: 100px;">
-                                            <i class="fa-solid fa-image fa-2x text-muted opacity-50"></i>
+                                    <div class="border rounded p-2 text-center w-100" style="border-color: var(--border-color) !important; background-color: var(--bg-color);">
+                                        <div class="bg-dark rounded mb-2 d-flex align-items-center justify-content-center" style="height: 140px; overflow: hidden;">
+                                            <img id="modalSmearImage" src="" alt="Microscopy Smear" class="img-fluid" style="object-fit: contain; max-height: 100%; display: none;">
                                         </div>
-                                        <div class="small fw-bold">Smear #1</div>
-                                        <div class="small text-muted" style="font-size: 0.65rem;">Uninfected</div>
-                                    </div>
-                                    <div class="border rounded p-2 text-center border-danger" style="background-color: rgba(220,53,69,0.05); min-width: 140px; box-shadow: 0 0 10px rgba(220,53,69,0.1);">
-                                        <div class="bg-dark rounded mb-2 d-flex align-items-center justify-content-center border border-danger border-opacity-50" style="height: 100px;">
-                                            <i class="fa-solid fa-disease fa-2x text-danger opacity-75 pulse-anim"></i>
-                                        </div>
-                                        <div class="small fw-bold text-danger">Smear #2</div>
-                                        <div class="small text-danger" style="font-size: 0.65rem;">Parasitized (Falciparum)</div>
-                                    </div>
-                                    <div class="border rounded p-2 text-center" style="border-color: var(--border-color) !important; min-width: 140px; background-color: var(--bg-color);">
-                                        <div class="bg-dark rounded mb-2 d-flex align-items-center justify-content-center" style="height: 100px;">
-                                            <i class="fa-solid fa-image fa-2x text-muted opacity-50"></i>
-                                        </div>
-                                        <div class="small fw-bold">Smear #3</div>
-                                        <div class="small text-muted" style="font-size: 0.65rem;">Uninfected</div>
+                                        <div class="small fw-bold text-truncate" id="modalSmearFilename" style="max-width: 15rem; margin: auto;">filename.png</div>
+                                        <div class="small text-muted" style="font-size: 0.65rem;">Primary Microscopic Capture</div>
                                     </div>
                                 </div>
                             </div>
@@ -1485,7 +1471,7 @@
     }
 
     // Populate Modal Function
-    window.populateModal = function(id, name, age, gender, diagnosis, confidence, risk, filename) {
+    window.populateModal = function(id, name, age, gender, diagnosis, confidence, risk, filename, date, notes, imagePath) {
         document.getElementById('modalPatientId').textContent = id;
         document.getElementById('modalPatientName').textContent = name;
         document.getElementById('modalPatientAgeGender').textContent = age + ' / ' + (gender === 'M' ? 'Male' : 'Female');
@@ -1494,6 +1480,24 @@
         if(fileEl) {
             fileEl.textContent = filename;
             fileEl.title = filename;
+        }
+        
+        let dateEl = document.getElementById('modalPatientDate');
+        if(dateEl) dateEl.textContent = date;
+        
+        let notesEl = document.getElementById('modalClinicalNotes');
+        if(notesEl) notesEl.value = notes;
+        
+        let imgEl = document.getElementById('modalSmearImage');
+        if(imgEl) {
+            imgEl.src = imagePath;
+            imgEl.style.display = 'block';
+        }
+        
+        let nameEl = document.getElementById('modalSmearFilename');
+        if(nameEl) {
+            nameEl.textContent = filename;
+            nameEl.title = filename;
         }
         
         let isHigh = risk === 'High Risk';

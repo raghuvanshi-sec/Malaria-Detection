@@ -1,64 +1,102 @@
-# Malaria Detection System 🔬🩸
+# AI Malaria Detection System 🔬🩸
 
-This is an AI-powered medical dashboard web application for Malaria Detection. It allows users to upload microscopic images of blood smears, processes them through a deep learning model, and provides a prediction on whether the cell is Parasitized or Uninfected, along with a confidence score.
+This is a comprehensive, end-to-end Deep Learning project for detecting malaria parasites in thin blood smear microscopic images. It uses a **MobileNetV2** Convolutional Neural Network (CNN) architecture via Transfer Learning to classify images as either **Parasitized** or **Uninfected**.
+
+The project features a full Python training pipeline (compatible with Kaggle datasets) and a professional Medical Dashboard built with Flask and Bootstrap 5 to seamlessly serve the AI model's predictions.
+
+---
 
 ## Features ✨
 
-- **Modern Medical Dashboard**: A clean, professional, and responsive UI built with HTML5, CSS3, and Bootstrap 5.
-- **Deep Learning Model**: Uses a trained Convolutional Neural Network (CNN) for image classification.
-- **Instant Predictions**: Seamless functional flow from image upload to prediction display.
-- **Comprehensive Results**: Displays results, confidence scores, and medical recommendations.
+### 🏗️ Deep Learning Training Pipeline
+
+- **Automated Dataset Handling**: Dynamically extracts the Kaggle Cell Images dataset (`parasitized.zip` and `uninfected.zip`).
+- **Data Augmentation**: Robust preprocessing loops using Keras `ImageDataGenerator` (rotation, zooming, horizontal flips).
+- **Transfer Learning**: Built on MobileNetV2 with pre-trained ImageNet weights, fine-tuned with custom classifier layers.
+- **Integrated Evaluation**: Automatically plots training/validation accuracy, generates a Classification Report, and exports a Seaborn Confusion Matrix (`confusion_matrix.png`).
+
+### 🏥 Medical Dashboard Web App
+
+- **Modern UI**: A clean, responsive, and professional dashboard interface matching modern healthcare analytics platforms, built with HTML5, CSS3, and Bootstrap 5.
+- **Instant Predictions**: Drag-and-drop file upload with a dynamic loading spinner simulating an AI analysis process.
+- **Comprehensive Results**: Displays clear classification badges, an animated confidence score meter, and medical action recommendations without requiring page reloads.
+
+---
 
 ## Tech Stack 🛠️
 
-- **Backend**: Python, Flask
-- **Frontend**: HTML, CSS, Bootstrap 5, Jinja2 Templates
-- **Machine Learning**: TensorFlow / Keras, NumPy, Pillow, OpenCV
+- **Backend core**: Python 3.11, Flask
+- **Frontend**: HTML5, custom CSS, Bootstrap 5, FontAwesome, JavaScript (AJAX)
+- **Deep Learning**: TensorFlow / Keras (MobileNetV2)
+- **Data Science**: NumPy, Pandas, Scikit-learn, Matplotlib, Seaborn
+
+---
 
 ## Project Structure 📂
 
+```text
 Malaria-Detection/
 │
-├── app.py                 # Main Flask application entry point
-├── train.py               # Script to train the deep learning model
-├── evaluation.py          # Script for model evaluation
-├── requirements.txt       # Python dependencies
-├── static/                # Static assets (CSS, JS, Images, Uploads)
-├── templates/             # HTML templates (index.html, dashboard.html, base.html)
+├── app.py                 # Main Flask application serving the web dashboard
+├── train.py               # Complete Kaggle training, augmentation & evaluation pipeline
+├── requirements.txt       # Project dependencies
+├── static/                
+│   └── style.css          # Custom medical UI styling
+├── templates/             
+│   ├── base.html          # Base layout template with sidebar & navbar
+│   └── dashboard.html     # Main interactive prediction interface
 └── ...
+```
+
+---
 
 ## Installation & Setup 🚀
 
-1. **Clone the repository**:
+> **Note:** TensorFlow currently requires **Python 3.11** (or 3.10). It is **not** supported on Python 3.14. Please ensure you are running a supported Python version.
 
-   ```bash
-   git clone https://github.com/raghuvanshi-sec/Malaria-Detection.git
-   cd Malaria-Detection
-   ```
+### 1. Clone the repository
 
-2. **Create a Virtual Environment** (optional but recommended):
+```bash
+git clone https://github.com/raghuvanshi-sec/Malaria-Detection.git
+cd Malaria-Detection
+```
 
-   ```bash
-   python -m venv venv
-   # On Windows: venv\Scripts\activate
-   # On Linux/macOS: source venv/bin/activate
-   ```
+### 2. Set up the Environment
 
-3. **Install Dependencies**:
+It is highly recommended to use a virtual environment configured with python 3.11:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+# Using Windows PowerShell
+& "C:\Program Files\Python311\python.exe" -m venv .venv
+.\.venv\Scripts\Activate.ps1
 
-4. **Run the Application**:
+# Install dependencies
+pip install -r requirements.txt
+```
 
-   ```bash
-   python app.py
-   ```
+### 3. Run the Training Pipeline (Optional)
 
-5. **Access the Web App**:
-   Open your browser and navigate to `http://127.0.0.1:5000`
+If you wish to train the model from scratch, ensure you have the Kaggle Maleria Cell Images dataset (`parasitized.zip` and `uninfected.zip`) in the root directory.
+
+```bash
+python train.py
+
+```
+
+This will extract the images, train the MobileNetV2 model for 5-10 epochs, output evaluation metrics, and generate `malaria_model.h5`.
+
+### 4. Run the Medical Dashboard
+
+Start the Flask web server to interact with your trained model:
+
+```bash
+python app.py
+```
+
+Open your browser and navigate to [http://127.0.0.1:5000](http://127.0.0.1:5000).
+
+---
 
 ## Disclaimer ⚠️
 
-This tool is for educational and research purposes only. It is not intended to be a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of a qualified health provider with any questions you may have regarding a medical condition.
+This tool is for educational, research, and hackathon demonstration purposes only. It is **not** intended to be a substitute for professional medical advice, diagnosis, or clinical treatment workflows. Always seek the advice of a qualified health provider regarding a medical condition.
