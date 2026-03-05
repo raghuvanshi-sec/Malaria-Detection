@@ -51,6 +51,10 @@ def serve_cell_images(filename):
 
 @app.route('/', methods=['GET'])
 def index():
+    return render_template('index.html')
+
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
     recent_patients = []
     
     # Helper to generate consistent mock data from filename
