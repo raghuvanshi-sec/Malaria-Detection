@@ -61,8 +61,8 @@ def index():
         seed = int(hashlib.md5(filename.encode()).hexdigest(), 16) % (10**8)
         rng = random.Random(seed)
         
-        first_names = ["Jonathan", "Sarah", "Michael", "Emily", "David", "Jessica", "James", "Maria", "Robert", "Linda", "William", "Elizabeth"]
-        last_names = ["Doe", "Jenkins", "Wong", "Rosa", "Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia"]
+        first_names = ["Aarav", "Priya", "Rahul", "Sneha", "Aditya", "Neha", "Rohan", "Anjali", "Vikram", "Kavita", "Siddharth", "Pooja"]
+        last_names = ["Sharma", "Patel", "Singh", "Kumar", "Gupta", "Desai", "Joshi", "Verma", "Reddy", "Iyer", "Rao", "Das"]
         
         name = f"{rng.choice(first_names)} {rng.choice(last_names)}"
         age = rng.randint(5, 85)
