@@ -1,9 +1,6 @@
 import os
-import numpy as plt
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
-import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import load_model
 from sklearn.metrics import confusion_matrix, classification_report

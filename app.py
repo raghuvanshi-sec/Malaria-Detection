@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 import os
-import io
 import time
 import numpy as np
 from PIL import Image
@@ -45,8 +44,6 @@ def process_image(img_file):
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
 
-from flask import send_from_directory
-import os
 
 @app.route('/cell_images/<path:filename>')
 def serve_cell_images(filename):

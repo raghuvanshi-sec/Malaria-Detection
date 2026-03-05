@@ -2,9 +2,7 @@ import os
 import zipfile
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
 
-import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout
@@ -161,7 +159,7 @@ def main():
     uninfected_dir = os.path.join(dataset_dir, 'Uninfected')
     
     if not os.path.exists(parasitized_dir) or not os.path.exists(uninfected_dir):
-         print(f"Error: Dataset directories not ready. Ensure ZIPs were extracted successfully.")
+         print("Error: Dataset directories not ready. Ensure ZIPs were extracted successfully.")
          return
          
     p_count = len(os.listdir(parasitized_dir)) if os.path.exists(parasitized_dir) else 0
