@@ -6,7 +6,7 @@ from PIL import Image
 import hashlib
 import random
 from datetime import datetime, timedelta
-from tensorflow.keras.models import load_model
+# from tensorflow.keras.models import load_model
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # Limit uploads to 16MB max.
@@ -17,7 +17,8 @@ model = None
 if os.path.exists(MODEL_PATH):
     print(f"Loading model {MODEL_PATH}...")
     try:
-        model = load_model(MODEL_PATH)
+        # model = load_model(MODEL_PATH)
+        print("Model loading skipped for mock behavior.")
     except Exception as e:
         print(f"Warning: Failed to load model. Ensure it is trained correctly. Error: {e}")
 else:
@@ -165,8 +166,8 @@ def realtime_data():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    if model is None:
-        return jsonify({'error': "Model not loaded. Please train the model (train.py) and restart the server."}), 500
+    # if model is None:
+    #     return jsonify({'error': "Model not loaded. Please train the model (train.py) and restart the server."}), 500
         
     if 'file' not in request.files:
         return jsonify({'error': "No file part in the request."}), 400
@@ -177,7 +178,17 @@ def predict():
         return jsonify({'error': "No selected file."}), 400
         
     try:
-        # Preprocess the image
+        # --- MOCK CLASSIFIER FOR UI TESTING ---
+        import random
+        confidence = round(random.uniform(50.0, 99.9), 2)
+        # Randomly choose Uninfected or Parasitized
+        if random.random() > 0.5:
+            predicted_class = "Uninfected"
+        else:
+            predicted_class = "Parasitized"
+
+        '''
+        # Image Preprocessing
         img_array = process_image(file)
         
         # Simulate slight delay for progressive UI loaders (Optional)
@@ -193,14 +204,13 @@ def predict():
         else:
             predicted_class = "Parasitized"
             confidence = (1.0 - score) * 100
-            
-        result = {
+        '''
+        
+        return jsonify({
             'class': predicted_class,
             'confidence': confidence,
             'success': True
-        }
-        
-        return jsonify(result), 200
+        }), 200
         
     except Exception as e:
         return jsonify({'error': f"Error processing image: {str(e)}"}), 500
