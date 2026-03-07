@@ -6,7 +6,9 @@ from PIL import Image
 import hashlib
 import random
 from datetime import datetime, timedelta
-# from tensorflow.keras.models import load_model
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # Limit uploads to 16MB max.
@@ -17,8 +19,8 @@ model = None
 if os.path.exists(MODEL_PATH):
     print(f"Loading model {MODEL_PATH}...")
     try:
-        # model = load_model(MODEL_PATH)
-        print("Model loading skipped for mock behavior.")
+        model = load_model(MODEL_PATH)
+        print("Model loaded successfully.")
     except Exception as e:
         print(f"Warning: Failed to load model. Ensure it is trained correctly. Error: {e}")
 else:
@@ -56,80 +58,7 @@ def index():
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-    recent_patients = []
-    
-    # Helper to generate consistent mock data from filename
-    def generate_mock_patient(filename, label):
-        seed = int(hashlib.md5(filename.encode()).hexdigest(), 16) % (10**8)
-        rng = random.Random(seed)
-        
-        first_names = ["Aarav", "Priya", "Rahul", "Sneha", "Aditya", "Neha", "Rohan", "Anjali", "Vikram", "Kavita", "Siddharth", "Pooja"]
-        last_names = ["Sharma", "Patel", "Singh", "Kumar", "Gupta", "Desai", "Joshi", "Verma", "Reddy", "Iyer", "Rao", "Das"]
-        
-        name = f"{rng.choice(first_names)} {rng.choice(last_names)}"
-        age = rng.randint(5, 85)
-        gender = rng.choice(['M', 'F'])
-        pid = f"#PID-{rng.randint(1000, 9999)}"
-        
-        if label == "Parasitized":
-            diagnosis = rng.choice(["Parasitized (P. falciparum)", "Parasitized (P. vivax)", "Parasitized (P. ovale)"])
-            risk = "High Risk"
-            confidence = round(rng.uniform(92.0, 99.8), 1)
-            notes = f"Patient presented with high fever ({round(rng.uniform(38.5, 40.5), 1)}°C), chills, and fatigue. Travel history to endemic region noted. Immediate blood smear requested. AI flagged as High Risk ({diagnosis.split('(')[-1].strip(')')})."
-            image_path = f"/cell_images/Parasitized/{filename}"
-        else:
-            diagnosis = "Uninfected"
-            risk = "Low Risk"
-            confidence = round(rng.uniform(94.0, 99.9), 1)
-            notes = "Patient presented with mild symptoms. Routine blood screening conducted. Artificial Intelligence analysis indicates negative for malaria parasites."
-            image_path = f"/cell_images/Uninfected/{filename}"
-            
-        days_ago = rng.randint(0, 5)
-        date_str = (datetime.now() - timedelta(days=days_ago)).strftime('%Y-%m-%d')
-        
-        return {
-            'date': date_str,
-            'id': pid,
-            'name': name,
-            'age': age,
-            'gender': gender,
-            'diagnosis': diagnosis,
-            'confidence': confidence,
-            'risk': risk,
-            'filename': filename,
-            'notes': notes,
-            'image_path': image_path
-        }
-
-
-    parasitized_dir = os.path.join('cell_images', 'Parasitized')
-    uninfected_dir = os.path.join('cell_images', 'Uninfected')
-    
-    try:
-        if os.path.exists(parasitized_dir) and os.path.exists(uninfected_dir):
-            p_files = [f for f in os.listdir(parasitized_dir) if f.endswith('.png')]
-            u_files = [f for f in os.listdir(uninfected_dir) if f.endswith('.png')]
-            
-            p_sample = sorted(p_files)[:5]
-            u_sample = sorted(u_files)[:5]
-            
-            for f in p_sample:
-                recent_patients.append(generate_mock_patient(f, 'Parasitized'))
-            for f in u_sample:
-                recent_patients.append(generate_mock_patient(f, 'Uninfected'))
-                
-            if len(u_files) > 5:
-                inc = generate_mock_patient(sorted(u_files)[5], 'Uninfected')
-                inc['diagnosis'] = "Inconclusive (Re-test)"
-                inc['risk'] = "Moderate"
-                inc['confidence'] = round(random.uniform(55.0, 75.0), 1)
-                recent_patients.append(inc)
-                
-            recent_patients.sort(key=lambda x: x['date'], reverse=True)
-    except Exception as e:
-        print(f"Failed parsing dataset: {e}")
-
-    return render_template('dashboard.html', recent_patients=recent_patients)
+    return render_template('dashboard.html')
 
 @app.route('/api/realtime', methods=['GET'])
 def realtime_data():
@@ -178,37 +107,25 @@ def predict():
         return jsonify({'error': "No selected file."}), 400
         
     try:
-        # --- MOCK CLASSIFIER FOR UI TESTING ---
-        import random
-        confidence = round(random.uniform(50.0, 99.9), 2)
-        # Randomly choose Uninfected or Parasitized
-        if random.random() > 0.5:
-            predicted_class = "Uninfected"
-        else:
-            predicted_class = "Parasitized"
-
-        '''
         # Image Preprocessing
         img_array = process_image(file)
-        
-        # Simulate slight delay for progressive UI loaders (Optional)
-        time.sleep(0.5) 
         
         # Predict
         prediction = model.predict(img_array)
         score = float(prediction[0][0])
         
+        # In this model: Parasitized is usually 0, Uninfected is 1 (depending on data generator order)
+        # MobileNetV2 with flow_from_directory usually sorts alphabetically: P=0, U=1
         if score > 0.5:
             predicted_class = "Uninfected"
             confidence = score * 100
         else:
             predicted_class = "Parasitized"
             confidence = (1.0 - score) * 100
-        '''
         
         return jsonify({
             'class': predicted_class,
-            'confidence': confidence,
+            'confidence': round(confidence, 2),
             'success': True
         }), 200
         
